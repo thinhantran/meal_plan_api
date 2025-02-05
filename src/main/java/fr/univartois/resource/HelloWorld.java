@@ -1,4 +1,4 @@
-package fr.univartois;
+package fr.univartois.resource;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -13,4 +13,6 @@ public class HelloWorld {
     public String hello() {
         return "Hello from Quarkus REST";
     }
+
+
 }
