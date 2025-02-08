@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DietaryRestriction {
+public class Utensil {
 
-  private int id;
+  private int utensilId;
 
-  private String restrictionName;
+  private String name;
 }

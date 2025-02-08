@@ -1,45 +1,45 @@
 package fr.univartois.resource;
 
-import fr.univartois.model.TokenAuth;
-import fr.univartois.model.User;
+import java.util.List;
+
+import fr.univartois.model.Recipe;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/auth")
-public class AuthResource {
+@Path("/recipes")
+public class RecipeResource {
 
-  @POST
-  @Path("/users")
-  @Consumes(MediaType.APPLICATION_JSON)
+  @GET
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
-  public User signup(User user) {
+  public List<Recipe> search(@QueryParam("terms") List<String> terms) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @POST
-  @Path("/login/user")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public TokenAuth login(User user) {
+  public Recipe create(Recipe recipe) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  @POST
-  @Path("/login/token")
+  @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public void login(TokenAuth token) {
+  public Recipe update(Recipe recipe) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  @POST
-  @Path("/logout")
+  @DELETE
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  public void logout(TokenAuth token) {
+  public void delete(Recipe recipe) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

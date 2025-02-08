@@ -5,9 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DietaryRestriction {
+public class HashAuth {
 
-  private int id;
+  private User user;
 
-  private String restrictionName;
+  private String hash;
+
+  private String salt;
 }

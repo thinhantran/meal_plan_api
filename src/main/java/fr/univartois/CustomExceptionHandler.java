@@ -7,8 +7,8 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 public class CustomExceptionHandler implements ExceptionMapper<UnsupportedOperationException> {
 
-    @Override
-    public Response toResponse(UnsupportedOperationException e) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).entity(e.getMessage()).build();
-    }
+  @Override
+  public Response toResponse(UnsupportedOperationException e) {
+    return Response.status(Response.Status.NOT_IMPLEMENTED).entity(e.getMessage()).build();
+  }
 }

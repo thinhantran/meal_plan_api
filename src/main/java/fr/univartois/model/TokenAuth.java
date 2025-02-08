@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DietaryRestriction {
+public class TokenAuth {
 
-  private int id;
+  private User user;
 
-  private String restrictionName;
+  private String token;
 }

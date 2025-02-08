@@ -5,9 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DietaryRestriction {
+public class PlannedMeal extends AbstractMeal {
 
-  private int id;
-
-  private String restrictionName;
 }
