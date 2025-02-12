@@ -15,5 +15,5 @@ public class Ingredient {
 
   private String measurementUnit;
 
-  private List<DietaryRestriction> associatedDietaryRestrictions;
+  // private List<DietaryRestriction> associatedDietaryRestrictions;
 }

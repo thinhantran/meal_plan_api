@@ -10,4 +10,5 @@ public class Utensil {
   private int utensilId;
 
   private String name;
+
 }

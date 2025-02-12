@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class IngredientFridgeQuantityInput {
 
+  private String ingredientName;
+
   private LocalDate date;
 
   private double quantity;

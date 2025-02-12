@@ -12,4 +12,5 @@ public class User {
   List<DietaryRestriction> dietaryRestrictions;
   private int userId;
   private String username;
+  private MemberRole memberRole;
 }
