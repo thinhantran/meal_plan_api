@@ -39,6 +39,7 @@ public class FamilyResource {
   }
 
   @Path("/{familyId}/{username}/{code}")
+  @POST
   public void joinFamily(@PathParam("familyId") int familyId, @PathParam("username") String username,
       @PathParam("code") String code) {
     throw new UnsupportedOperationException("Not supported yet.");
