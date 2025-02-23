@@ -3,6 +3,7 @@ package fr.univartois.resource;
 import java.util.List;
 
 import fr.univartois.model.Family;
+import fr.univartois.model.FamilyInvitation;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import jakarta.ws.rs.GET;
@@ -30,7 +31,22 @@ public class FamilyResource {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  @Path("/{familyId}")
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  public FamilyInvitation createInvitation(@PathParam("familyId") int familyId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Path("/{familyId}/{username}/{code}")
+  public void joinFamily(@PathParam("familyId") int familyId, @PathParam("username") String username,
+      @PathParam("code") String code) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
   @Path("/{familyId}/members/{username}/roles")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
   public MemberRole.Role getRole(@PathParam("familyId") int familyId, @PathParam("username") String username) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
