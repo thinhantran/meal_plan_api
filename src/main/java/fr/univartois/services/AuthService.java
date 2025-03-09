@@ -8,7 +8,8 @@ import java.util.Set;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import fr.univartois.dtos.CustomJwt;
+import fr.univartois.dtos.CustomJwtAccess;
+import fr.univartois.dtos.CustomJwtPair;
 import fr.univartois.model.PasswordAuth;
 import fr.univartois.model.TokenAuth;
 import fr.univartois.model.User;
@@ -59,17 +60,17 @@ public class AuthService {
   }
 
   @Transactional
-  public String getAccessToken(User user) {
-    return Jwt.issuer("http://localhost:8080")
+  public CustomJwtAccess getAccessToken(User user) {
+    return new CustomJwtAccess(Jwt.issuer("http://localhost:8080")
         .subject(user.getUsername())
         .groups("access")
         .expiresAt(Instant.now().plus(5, ChronoUnit.MINUTES))
-        .sign();
+        .sign());
   }
 
   @Transactional
-  public CustomJwt getAccessAndRefreshToken(User user) {
-    String accessToken = getAccessToken(user);
+  public CustomJwtPair getAccessAndRefreshToken(User user) {
+    String accessToken = getAccessToken(user).accessToken();
     String refreshToken = Jwt.issuer("http://localhost:8080")
         .subject(user.getUsername())
         .groups(REFRESH_GROUP)
@@ -79,7 +80,7 @@ public class AuthService {
     tokenAuth.setToken(refreshToken);
     tokenAuth.setUser(user);
     tokenAuthRepository.persist(tokenAuth);
-    return new CustomJwt(accessToken, refreshToken);
+    return new CustomJwtPair(accessToken, refreshToken);
   }
 
   public User hasAssociatedUser(JsonWebToken jwt) {

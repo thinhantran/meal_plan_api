@@ -7,7 +7,8 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
-import fr.univartois.dtos.CustomJwt;
+import fr.univartois.dtos.CustomJwtAccess;
+import fr.univartois.dtos.CustomJwtPair;
 import fr.univartois.dtos.Message;
 import fr.univartois.model.PasswordAuth;
 import fr.univartois.model.User;
@@ -72,7 +73,7 @@ public class AuthResource {
     if (!samePassword) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-    CustomJwt customJwt = authService.getAccessAndRefreshToken(auth.getUser());
+    CustomJwtPair customJwt = authService.getAccessAndRefreshToken(auth.getUser());
     return Response.status(Response.Status.OK).entity(customJwt).build();
   }
 
@@ -86,7 +87,7 @@ public class AuthResource {
     if (user == null) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(new Message("Invalid token")).build();
     }
-    CustomJwt customJwt = authService.getAccessAndRefreshToken(user);
+    CustomJwtAccess customJwt = authService.getAccessToken(user);
     return Response.status(Response.Status.OK).entity(customJwt).build();
   }
 
