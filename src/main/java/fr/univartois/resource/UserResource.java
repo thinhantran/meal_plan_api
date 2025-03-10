@@ -39,6 +39,13 @@ public class UserResource {
   }
 
   @Path("/families/{familyId}")
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  public Family assignUserToFamily(@PathParam("username") String username, @PathParam("familyId") String familyId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Path("/families/{familyId}")
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   public Family reassignUserToFamily(@PathParam("username") String username, @PathParam("familyId") String familyId) {

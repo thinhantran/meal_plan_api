@@ -1,45 +1,107 @@
 package fr.univartois.resource;
 
-import fr.univartois.model.TokenAuth;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
+
+import fr.univartois.dtos.CustomJwtAccess;
+import fr.univartois.dtos.CustomJwtPair;
+import fr.univartois.dtos.Message;
+import fr.univartois.model.PasswordAuth;
 import fr.univartois.model.User;
+import fr.univartois.services.AuthService;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/auth")
+@SecuritySchemes(value = {
+    @SecurityScheme(
+        bearerFormat = "JWT",
+        scheme = "bearer",
+        securitySchemeName = "RefreshBearerAuthentification",
+        apiKeyName = "Authroization",
+        type = SecuritySchemeType.HTTP,
+        description = "Uses the refresh token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
+        in = SecuritySchemeIn.HEADER
+    )
+})
 public class AuthResource {
+
+  AuthService authService;
+
+  JsonWebToken jwt;
+
+  public AuthResource(JsonWebToken jwt, AuthService authService) {
+    this.jwt = jwt;
+    this.authService = authService;
+  }
 
   @POST
   @Path("/users")
-  @Consumes(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
-  public User signup(User user) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  @Transactional
+  public Response signup(@FormParam("username") String username, @FormParam("password") String password) {
+    if (authService.findUser(username) != null) {
+      return Response.status(Response.Status.CONFLICT).build();
+    }
+    authService.createUserWithPassword(username, password);
+
+    return Response.status(Response.Status.CREATED).entity(new Message("Registered successfully")).build();
   }
 
   @POST
   @Path("/login/user")
-  @Consumes(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
-  public TokenAuth login(User user) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Response login(@FormParam("username") String username, @FormParam("password") String password) {
+    PasswordAuth auth = authService.findUser(username);
+    if (auth == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    boolean samePassword = authService.comparePassword(auth, password);
+    if (!samePassword) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    CustomJwtPair customJwt = authService.getAccessAndRefreshToken(auth.getUser());
+    return Response.status(Response.Status.OK).entity(customJwt).build();
   }
 
+  @RolesAllowed("refresh")
   @POST
   @Path("/login/token")
-  @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public void login(TokenAuth token) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  @SecurityRequirement(name = "RefreshBearerAuthentification")
+  public Response loginWithToken() {
+    User user = authService.hasAssociatedUser(jwt);
+    if (user == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(new Message("Invalid token")).build();
+    }
+    CustomJwtAccess customJwt = authService.getAccessToken(user);
+    return Response.status(Response.Status.OK).entity(customJwt).build();
   }
 
+  @RolesAllowed("refresh")
   @POST
   @Path("/logout")
-  @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public void logout(TokenAuth token) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  @SecurityRequirement(name = "RefreshBearerAuthentification")
+  public Response logout() {
+    User user = authService.hasAssociatedUser(jwt);
+    if (user != null) {
+      authService.deleteRefreshToken(jwt);
+      return Response.noContent().build();
+    }
+    return Response.status(Response.Status.UNAUTHORIZED).entity(new Message("Not connected")).build();
   }
 }

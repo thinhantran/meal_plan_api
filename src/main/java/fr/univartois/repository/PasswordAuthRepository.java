@@ -1,9 +1,9 @@
 package fr.univartois.repository;
 
-import fr.univartois.model.User;
+import fr.univartois.model.PasswordAuth;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class UserRepository implements PanacheRepository<User> {
+public class PasswordAuthRepository implements PanacheRepository<PasswordAuth> {
 }
