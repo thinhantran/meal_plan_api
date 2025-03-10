@@ -9,13 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name="Users")
 public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int userId;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   private List<DietaryRestriction> dietaryRestrictions;
 
   private String username;

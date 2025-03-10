@@ -44,11 +44,11 @@ public class FamilyResource {
     return familyService.getInvitations(familyId);
   }
 
-  @Path("/{familyId}/{code}/{role}")
+  @Path("/{familyId}/{role}")
   @POST
-  public void joinFamily(@PathParam("familyId") int familyId, @PathParam("code") String code,
+  public Response joinFamily(@PathParam("familyId") int familyId,
                          @PathParam("role") MemberRole.Role role,  User user) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return familyService.joinFamily(familyId, role, user);
   }
 
   @Path("/{familyId}/members/{userId}/roles")

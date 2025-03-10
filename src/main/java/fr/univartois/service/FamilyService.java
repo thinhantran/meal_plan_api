@@ -7,7 +7,6 @@ import fr.univartois.model.User;
 import fr.univartois.repository.FamilyInvitationRepository;
 import fr.univartois.repository.FamilyRepository;
 import fr.univartois.repository.MemberRoleRepository;
-import fr.univartois.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
@@ -18,16 +17,13 @@ import java.util.List;
 public class FamilyService {
 
     @Inject
-    private FamilyRepository familyRepository;
+    FamilyRepository familyRepository;
 
     @Inject
-    private UserRepository userRepository;
+    FamilyInvitationRepository familyInvitationRepository;
 
     @Inject
-    private FamilyInvitationRepository familyInvitationRepository;
-
-    @Inject
-    private MemberRoleRepository memberRoleRepository;
+    MemberRoleRepository memberRoleRepository;
 
     public Response createFamily(User user) {
         Family family = new Family();
@@ -35,12 +31,13 @@ public class FamilyService {
         memberRole.setUser(user);
         memberRole.setCategory(MemberRole.Role.MANAGER);
         family.addMember(memberRole);
+        memberRoleRepository.persist(memberRole);
         familyRepository.persist(family);
         return Response.status(Response.Status.CREATED).entity(family).build();
     }
 
     public List<User> findMembers(long id) {
-        return userRepository.findAllByFamily(id);
+        return memberRoleRepository.findAllByFamily(id);
     }
 
     public Family get(long id) {
@@ -57,6 +54,16 @@ public class FamilyService {
 
     public List<User> getInvitations(long id) {
         return familyInvitationRepository.findAllByFamily(id);
+    }
+
+    public Response joinFamily(long id, MemberRole.Role role, User user) {
+        FamilyInvitation invitation = familyInvitationRepository.findInvitation(user.getUserId(), id);
+        if(invitation != null) {
+            familyInvitationRepository.delete(invitation);
+        }
+        MemberRole memberRole = new MemberRole(null, user, familyRepository.findById(id), role);
+        memberRoleRepository.persist(memberRole);
+        return Response.status(Response.Status.OK).build();
     }
 
     public MemberRole.Role getMemberRole(long familyId, long userId) {
