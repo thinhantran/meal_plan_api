@@ -14,4 +14,8 @@ public class IngredientFridgeQuantityInput {
   private LocalDate date;
 
   private double quantity;
+
+  private String measurementUnit;
+
+  private IngredientCategory ingredientCategory;
 }

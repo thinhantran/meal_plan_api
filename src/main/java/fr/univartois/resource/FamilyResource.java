@@ -6,6 +6,9 @@ import fr.univartois.model.Family;
 import fr.univartois.model.FamilyInvitation;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
+import fr.univartois.repository.FamilyRepository;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -16,6 +19,9 @@ import jakarta.ws.rs.core.Response;
 
 @Path("/families/")
 public class FamilyResource {
+
+  @Inject
+  FamilyRepository familyRepository;
 
   @Path("/{familyId}")
   @GET
@@ -55,7 +61,10 @@ public class FamilyResource {
   @Path("/{username}")
   @POST
   @Produces(MediaType.APPLICATION_JSON)
+  @Transactional
   public Response createFamilyForUser(@PathParam("username") String username) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    Family family = new Family();
+    familyRepository.persist(family);
+    return Response.status(Response.Status.CREATED).entity(family).build();
   }
 }
