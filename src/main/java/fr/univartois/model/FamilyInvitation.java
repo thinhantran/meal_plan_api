@@ -17,6 +17,6 @@ public class FamilyInvitation {
   @ManyToOne
   private Family family;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   private User user;
 }
