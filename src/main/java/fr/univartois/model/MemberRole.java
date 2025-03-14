@@ -14,6 +14,7 @@ import lombok.Setter;
 public class MemberRole {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @OneToOne
@@ -26,6 +27,6 @@ public class MemberRole {
   private Role category;
 
   public enum Role {
-    MEMBER, PROPOSER, MANAGER, ADMIN;
+    MEMBER, PROPOSER, MANAGER, ADMIN
   }
 }

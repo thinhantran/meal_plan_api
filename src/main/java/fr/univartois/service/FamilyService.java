@@ -29,6 +29,7 @@ public class FamilyService {
         Family family = new Family();
         MemberRole memberRole = new MemberRole();
         memberRole.setUser(user);
+        memberRole.setFamily(family);
         memberRole.setCategory(MemberRole.Role.MANAGER);
         family.addMember(memberRole);
         memberRoleRepository.persist(memberRole);

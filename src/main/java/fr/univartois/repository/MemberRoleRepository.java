@@ -6,16 +6,14 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.core.Response;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class MemberRoleRepository implements PanacheRepository<MemberRole> {
 
     public List<User> findAllByFamily(long id) {
-        return find("family.id", id).stream().map(MemberRole::getUser).collect(Collectors.toList());
+        return find("SELECT m.user FROM MemberRole m WHERE m.family.id = ?1", id).project(User.class).list();
     }
 
     public MemberRole.Role getRole(long familyId, long userId) {

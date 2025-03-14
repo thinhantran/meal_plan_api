@@ -3,11 +3,11 @@ package fr.univartois.resource;
 import java.util.List;
 
 import fr.univartois.model.Family;
-import fr.univartois.model.FamilyInvitation;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import fr.univartois.service.FamilyService;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -33,6 +33,7 @@ public class FamilyResource {
   }
 
   @Path("/{familyId}/invitations")
+  @Transactional
   @POST
   public Response createInvitation(@PathParam("familyId") long familyId, User user) {
     return familyService.createInvitation(familyId, user);
@@ -45,6 +46,7 @@ public class FamilyResource {
   }
 
   @Path("/{familyId}/{role}")
+  @Transactional
   @POST
   public Response joinFamily(@PathParam("familyId") int familyId,
                          @PathParam("role") MemberRole.Role role,  User user) {
@@ -59,6 +61,7 @@ public class FamilyResource {
 
   @Path("/")
   @POST
+  @Transactional
   public Response createFamilyForUser(User user) {
     return familyService.createFamily(user);
   }
