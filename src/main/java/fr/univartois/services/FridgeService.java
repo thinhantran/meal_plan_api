@@ -1,4 +1,4 @@
-package fr.univartois.service;
+package fr.univartois.services;
 
 import fr.univartois.model.*;
 import fr.univartois.model.IngredientFridgeQuantityInput;
@@ -63,7 +63,6 @@ public class FridgeService {
             System.out.println("Ingredient not found for name " + input.getIngredientName());
             ingredient = new Ingredient();
             ingredient.setName(input.getIngredientName());
-            ingredient.setMeasurementUnit(input.getMeasurementUnit());
             ingredient.setCategory(input.getIngredientCategory());
             fridgeRepository.saveIngredient(ingredient);
         } else {

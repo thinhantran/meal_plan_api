@@ -1,4 +1,5 @@
 package fr.univartois.exception;
+import fr.univartois.dtos.Message;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -9,7 +10,7 @@ public class GlobalExceptionHandler implements ExceptionMapper<IllegalArgumentEx
     @Override
     public Response toResponse(IllegalArgumentException exception) {
         return Response.status(Response.Status.BAD_REQUEST)
-                .entity(exception.getMessage())
+                .entity(new Message(exception.getMessage()))
                 .build();
     }
 }
