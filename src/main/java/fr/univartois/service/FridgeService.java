@@ -174,6 +174,27 @@ public class FridgeService {
     }
 
     @Transactional
+    public IngredientFridgeQuantity removeIngredientQuantity(int familyId, int ingredientFridgeQuantityId, IngredientRemove request) {
+        Optional<IngredientFridgeQuantity> ingredientFridgeQuantityOpt = fridgeRepository.findIngredientFridgeQuantityById(ingredientFridgeQuantityId);
+        if (ingredientFridgeQuantityOpt.isEmpty()) {
+            throw new IllegalArgumentException("Ingredient not found in fridge for ID: " + ingredientFridgeQuantityId);
+        }
+        IngredientFridgeQuantity ingredientFridgeQuantity = ingredientFridgeQuantityOpt.get();
+        if (ingredientFridgeQuantity.getFridge().getFamily().getFamilyId() != familyId) {
+            throw new IllegalArgumentException("Ingredient does not belong to the specified family fridge.");
+        }
+        if (ingredientFridgeQuantity.getMeasurementUnit() != request.getMeasurementUnit()) {
+            ingredientFridgeQuantity.setQuantity(convertToSmallerUnit(ingredientFridgeQuantity.getQuantity(), ingredientFridgeQuantity.getMeasurementUnit(), request.getMeasurementUnit()));
+        }
+        if (ingredientFridgeQuantity.getQuantity() < request.getAmountToRemove()) {
+            throw new IllegalArgumentException("Not enough ingredient quantity to remove.");
+        }
+        ingredientFridgeQuantity.setQuantity(ingredientFridgeQuantity.getQuantity() - request.getAmountToRemove());
+
+        return fridgeRepository.updateIngredientFridgeQuantity(ingredientFridgeQuantity);
+    }
+
+    @Transactional
     public IngredientFridgeQuantity getIngredientFridgeQuantity(int familyId, int ingredientFridgeQuantityId) {
         Optional<Fridge> fridgeOpt = fridgeRepository.findFridgeByFamilyId(familyId);
         if (fridgeOpt.isEmpty()) {

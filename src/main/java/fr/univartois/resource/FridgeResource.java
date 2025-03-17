@@ -58,6 +58,21 @@ public class FridgeResource {
     return Response.status(Response.Status.CREATED).entity(addedIngredient).build();
   }
 
+  @POST
+  @Path("/ingredients/{ingredientFridgeQuantityId}/remove")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response removeIngredientQuantity(@PathParam("familyId") int familyId,
+                                           @PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId,
+                                           IngredientRemove request) {
+    try {
+      IngredientFridgeQuantity updatedIngredient = fridgeService.removeIngredientQuantity(familyId, ingredientFridgeQuantityId, request);
+      return Response.ok(updatedIngredient).build();
+    } catch (IllegalArgumentException e) {
+      return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+    }
+  }
+
   @PUT
   @Path("/ingredients/{ingredientFridgeQuantityId}")
   @Consumes(MediaType.APPLICATION_JSON)
