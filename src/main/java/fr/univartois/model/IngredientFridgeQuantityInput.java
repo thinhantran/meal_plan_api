@@ -15,7 +15,7 @@ public class IngredientFridgeQuantityInput {
 
   private double quantity;
 
-  private String measurementUnit;
+  private IngredientUnit measurementUnit;
 
   private IngredientCategory ingredientCategory;
 }

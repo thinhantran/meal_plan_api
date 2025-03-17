@@ -18,13 +18,11 @@ public class Ingredient {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
-  private String measurementUnit;
 
   // private List<DietaryRestriction> associatedDietaryRestrictions;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private IngredientCategory category = IngredientCategory.AUTRE;
+  private IngredientCategory category = IngredientCategory.OTHER;
 
 }
