@@ -1,10 +1,10 @@
 package fr.univartois.service;
 
 import fr.univartois.model.Family;
-import fr.univartois.model.FamilyInvitation;
+//import fr.univartois.model.FamilyInvitation;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
-import fr.univartois.repository.FamilyInvitationRepository;
+//import fr.univartois.repository.FamilyInvitationRepository;
 import fr.univartois.repository.FamilyRepository;
 import fr.univartois.repository.MemberRoleRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,8 +19,8 @@ public class FamilyService {
     @Inject
     FamilyRepository familyRepository;
 
-    @Inject
-    FamilyInvitationRepository familyInvitationRepository;
+//    @Inject
+//    FamilyInvitationRepository familyInvitationRepository;
 
     @Inject
     MemberRoleRepository memberRoleRepository;
@@ -45,24 +45,25 @@ public class FamilyService {
         return familyRepository.findById(id);
     }
 
-    public Response createInvitation(long id, User user) {
-        FamilyInvitation invitation = new FamilyInvitation();
-        invitation.setUser(user);
-        invitation.setFamily(familyRepository.findById(id));
-        familyInvitationRepository.persist(invitation);
-        return Response.status(Response.Status.CREATED).entity(invitation).build();
-    }
+//    public Response createInvitation(long id, User user) {
+//        FamilyInvitation invitation = new FamilyInvitation();
+//        invitation.setUser(user);
+//        invitation.setFamily(familyRepository.findById(id));
+//        familyInvitationRepository.persist(invitation);
+//        return Response.status(Response.Status.CREATED).entity(invitation).build();
+//    }
+//
+//    public List<User> getInvitations(long id) {
+//        return familyInvitationRepository.findAllByFamily(id);
+//    }
 
-    public List<User> getInvitations(long id) {
-        return familyInvitationRepository.findAllByFamily(id);
-    }
-
-    public Response joinFamily(long id, MemberRole.Role role, User user) {
-        FamilyInvitation invitation = familyInvitationRepository.findInvitation(user.getUserId(), id);
-        if(invitation != null) {
-            familyInvitationRepository.delete(invitation);
-        }
-        MemberRole memberRole = new MemberRole(null, user, familyRepository.findById(id), role);
+    public Response joinFamily(String code, User user) {
+        Family family = familyRepository.findFamilyByCode(code);
+//        FamilyInvitation invitation = familyInvitationRepository.findInvitation(user.getUserId(), family.getId());
+//        if(invitation != null) {
+//            familyInvitationRepository.delete(invitation);
+//        }
+        MemberRole memberRole = new MemberRole(null, user, family, MemberRole.Role.MEMBER);
         memberRoleRepository.persist(memberRole);
         return Response.status(Response.Status.OK).build();
     }

@@ -1,5 +1,6 @@
 package fr.univartois.repository;
 
+import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -22,6 +23,10 @@ public class MemberRoleRepository implements PanacheRepository<MemberRole> {
             throw new BadRequestException();
         }
         return query.singleResult().getCategory();
+    }
+
+    public Family getFamily(User user) {
+        return find("SELECT m.family FROM MemberRole m WHERE m.user.id = ?1", user.getUserId()).project(Family.class).singleResultOptional().orElse(null);
     }
 
 }

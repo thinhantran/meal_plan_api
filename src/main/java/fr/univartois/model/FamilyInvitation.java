@@ -3,7 +3,6 @@ package fr.univartois.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.DialectOverride;
 
 @Getter
 @Setter
@@ -17,6 +16,6 @@ public class FamilyInvitation {
   @ManyToOne
   private Family family;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   private User user;
 }

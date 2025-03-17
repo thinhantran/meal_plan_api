@@ -17,7 +17,7 @@ public class MemberRole {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne
   @JoinColumn(name = "user_id", referencedColumnName = "userId")
   private User user;
 
