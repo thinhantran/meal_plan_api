@@ -37,7 +37,7 @@ public class AuthService {
   }
 
   @Transactional
-  public void createUserWithPassword(String username, String password) {
+  public User createUserWithPassword(String username, String password) {
     User user = new User();
     user.setUsername(username);
     PasswordAuth passwordAuth = new PasswordAuth();
@@ -47,6 +47,7 @@ public class AuthService {
     passwordAuth.setSalt(salt);
     passwordAuth.setUser(user);
     passwordAuthRepository.persist(passwordAuth);
+    return user;
   }
 
   public PasswordAuth findUser(String username) {
@@ -84,9 +85,6 @@ public class AuthService {
   }
 
   public User hasAssociatedUser(JsonWebToken jwt) {
-    if (!Objects.equals(Set.of(REFRESH_GROUP), jwt.getGroups())) {
-      return null;
-    }
     String username = jwt.getSubject();
     String rawToken = jwt.getRawToken();
     TokenAuth tokenAuth = tokenAuthRepository.find("token", rawToken).firstResult();
@@ -98,9 +96,6 @@ public class AuthService {
 
   @Transactional
   public void deleteRefreshToken(JsonWebToken jwt) {
-    if (!Objects.equals(Set.of(REFRESH_GROUP), jwt.getGroups())) {
-      return;
-    }
     tokenAuthRepository.delete("token", jwt.getRawToken());
   }
 

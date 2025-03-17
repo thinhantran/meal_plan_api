@@ -55,9 +55,10 @@ public class AuthResource {
     if (authService.findUser(username) != null) {
       return Response.status(Response.Status.CONFLICT).build();
     }
-    authService.createUserWithPassword(username, password);
+    User user = authService.createUserWithPassword(username, password);
+    CustomJwtPair customJwtPair = authService.getAccessAndRefreshToken(user);
 
-    return Response.status(Response.Status.CREATED).entity(new Message("Registered successfully")).build();
+    return Response.status(Response.Status.CREATED).entity(customJwtPair).build();
   }
 
   @POST
