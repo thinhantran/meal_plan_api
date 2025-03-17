@@ -93,6 +93,29 @@ public class FridgeService {
             ingredientFridgeQuantity.setMeasurementUnit(input.getMeasurementUnit());
         }
 
+        if (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.G
+                || ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.ML) {
+            double totalQuantity = Math.round(ingredientFridgeQuantity.getQuantity() * 10.0) / 10.0;
+            if (totalQuantity > 1000) {
+                IngredientUnit newUnit = (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.G)
+                        ? IngredientUnit.KG : IngredientUnit.L;
+                double convertedQuantity = convertToSmallerUnit(totalQuantity, ingredientFridgeQuantity.getMeasurementUnit(), newUnit);
+                ingredientFridgeQuantity.setQuantity(convertedQuantity);
+                ingredientFridgeQuantity.setMeasurementUnit(newUnit);
+            }
+        }
+        if (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.KG
+                || ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.L) {
+            double totalQuantity = Math.round(ingredientFridgeQuantity.getQuantity() * 10.0) / 10.0;
+            if (totalQuantity < 1) {
+                IngredientUnit newUnit = (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.KG)
+                        ? IngredientUnit.G : IngredientUnit.ML;
+                double convertedQuantity = convertToSmallerUnit(totalQuantity, ingredientFridgeQuantity.getMeasurementUnit(), newUnit);
+                ingredientFridgeQuantity.setQuantity(convertedQuantity);
+                ingredientFridgeQuantity.setMeasurementUnit(newUnit);
+            }
+        }
+
         fridgeRepository.saveIngredientFridgeQuantity(ingredientFridgeQuantity);
         return ingredientFridgeQuantity;
     }
@@ -125,6 +148,18 @@ public class FridgeService {
         ingredientFridgeQuantity.setQuantity(quantity);
         ingredientFridgeQuantity.setMeasurementUnit(input.getMeasurementUnit());
         ingredientFridgeQuantity.setDate(input.getDate());
+
+        if (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.G
+                || ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.ML) {
+            double totalQuantity = ingredientFridgeQuantity.getQuantity();
+            if (totalQuantity > 1000) {
+                IngredientUnit newUnitToUse = (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.G)
+                        ? IngredientUnit.KG : IngredientUnit.L;
+                double convertedQuantity = convertToSmallerUnit(totalQuantity, ingredientFridgeQuantity.getMeasurementUnit(), newUnitToUse);
+                ingredientFridgeQuantity.setQuantity(convertedQuantity);
+                ingredientFridgeQuantity.setMeasurementUnit(newUnitToUse);
+            }
+        }
 
         return fridgeRepository.updateIngredientFridgeQuantity(ingredientFridgeQuantity);
     }
