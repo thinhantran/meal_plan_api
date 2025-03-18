@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import fr.univartois.model.*;
 import fr.univartois.service.FridgeService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -17,12 +18,37 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
+
 
 @Path("/fridge/{familyId}")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@SecuritySchemes(value = {
+        @SecurityScheme(
+                bearerFormat = "JWT",
+                scheme = "bearer",
+                securitySchemeName = "AccessBearerAuthentification",
+                apiKeyName = "Authorization",
+                type = SecuritySchemeType.HTTP,
+                description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
+                in = SecuritySchemeIn.HEADER
+        )
+})
+@RolesAllowed("access")
+@SecurityRequirement(name = "AccessBearerAuthentification")
 public class FridgeResource {
 
   @Inject
   FridgeService fridgeService;
+
+  @Inject
+  JsonWebToken jwt;
 
   @POST
   @Path("/create")

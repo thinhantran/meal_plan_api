@@ -184,12 +184,18 @@ public class FridgeService {
             throw new IllegalArgumentException("Ingredient does not belong to the specified family fridge.");
         }
         if (ingredientFridgeQuantity.getMeasurementUnit() != request.getMeasurementUnit()) {
-            ingredientFridgeQuantity.setQuantity(convertToSmallerUnit(ingredientFridgeQuantity.getQuantity(), ingredientFridgeQuantity.getMeasurementUnit(), request.getMeasurementUnit()));
+            ingredientFridgeQuantity.setQuantity(
+                    convertToSmallerUnit(ingredientFridgeQuantity.getQuantity(),
+                            ingredientFridgeQuantity.getMeasurementUnit(),
+                            request.getMeasurementUnit())
+            );
+            ingredientFridgeQuantity.setMeasurementUnit(request.getMeasurementUnit()); // Cập nhật đơn vị mới
         }
         if (ingredientFridgeQuantity.getQuantity() < request.getAmountToRemove()) {
             throw new IllegalArgumentException("Not enough ingredient quantity to remove.");
         }
-        ingredientFridgeQuantity.setQuantity(ingredientFridgeQuantity.getQuantity() - request.getAmountToRemove());
+        double quantity = Math.round((ingredientFridgeQuantity.getQuantity() - request.getAmountToRemove()) * 10.0) / 10.0;
+        ingredientFridgeQuantity.setQuantity(quantity);
 
         return fridgeRepository.updateIngredientFridgeQuantity(ingredientFridgeQuantity);
     }
