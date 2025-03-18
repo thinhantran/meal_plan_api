@@ -5,6 +5,7 @@ import java.util.List;
 import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
+import fr.univartois.repository.MemberRoleRepository;
 import fr.univartois.repository.UserRepository;
 import fr.univartois.service.FamilyService;
 import jakarta.annotation.security.RolesAllowed;
@@ -47,15 +48,26 @@ public class FamilyResource {
   @Inject
   JsonWebToken jwt;
 
+  @Inject
+  MemberRoleRepository memberRoleRepository;
+
   @Path("/{familyId}")
   @GET
   public Family getFamilyDetail(@PathParam("familyId") int familyId) {
+    User user = userRepository.findByUsername(jwt.getSubject());
+    if(memberRoleRepository.findByUserAndFamily(familyId, user.getUserId()) == null) {
+      throw new ForbiddenException();
+    }
     return familyService.get(familyId);
   }
 
   @Path("/{familyId}/members")
   @GET
   public List<User> getUsers(@PathParam("familyId") long familyId) {
+    User user = userRepository.findByUsername(jwt.getSubject());
+    if(memberRoleRepository.findByUserAndFamily(familyId, user.getUserId()) == null) {
+      throw new ForbiddenException();
+    }
     return familyService.findMembers(familyId);
   }
 
@@ -83,14 +95,19 @@ public class FamilyResource {
   @Path("/{familyId}/members/{userId}/roles")
   @GET
   public MemberRole.Role getRole(@PathParam("familyId") int familyId, @PathParam("userId") long userId) {
+    User user = userRepository.findByUsername(jwt.getSubject());
+    if(memberRoleRepository.findByUserAndFamily(familyId, user.getUserId()) == null) {
+      throw new ForbiddenException();
+    }
     return familyService.getMemberRole(familyId, userId);
   }
 
   @Path("/")
   @POST
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Transactional
-  public Response createFamilyForUser() {
+  public Response createFamilyForUser(@FormParam("name") String name) {
     User user = userRepository.findByUsername(jwt.getSubject());
-    return familyService.createFamily(user);
+    return familyService.createFamily(user, name);
   }
 }

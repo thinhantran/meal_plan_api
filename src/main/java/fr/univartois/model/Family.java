@@ -24,6 +24,8 @@ public class Family {
   @JsonIgnore
   private List<MemberRole> memberRoles = new ArrayList<>();
 
+  private String name;
+
   @Column(unique = true, length = LENGTHCODE)
   private String code;
 

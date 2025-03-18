@@ -17,6 +17,10 @@ public class MemberRoleRepository implements PanacheRepository<MemberRole> {
         return find("SELECT m.user FROM MemberRole m WHERE m.family.id = ?1", id).project(User.class).list();
     }
 
+    public MemberRole findByUserAndFamily(long familyId, long userId) {
+        return find("user.userId = ?1 and family.id = ?2", userId, familyId).singleResultOptional().orElse(null);
+    }
+
     public MemberRole.Role getRole(long familyId, long userId) {
         PanacheQuery<MemberRole> query = find("user.userId = ?1 and family.id = ?2", userId, familyId);
         if(query.count() == 0) {

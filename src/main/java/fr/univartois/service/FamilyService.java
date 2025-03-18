@@ -25,13 +25,14 @@ public class FamilyService {
     @Inject
     MemberRoleRepository memberRoleRepository;
 
-    public Response createFamily(User user) {
+    public Response createFamily(User user, String name) {
         Family family = new Family();
         MemberRole memberRole = new MemberRole();
         memberRole.setUser(user);
         memberRole.setFamily(family);
         memberRole.setCategory(MemberRole.Role.MANAGER);
         family.addMember(memberRole);
+        family.setName(name);
         memberRoleRepository.persist(memberRole);
         familyRepository.persist(family);
         return Response.status(Response.Status.CREATED).entity(family).build();
@@ -59,6 +60,9 @@ public class FamilyService {
 
     public Response joinFamily(String code, User user) {
         Family family = familyRepository.findFamilyByCode(code);
+        if(memberRoleRepository.findByUserAndFamily(family.getId(), user.getUserId()) != null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("L'utilisateur fait déjà parti du groupe").build();
+        }
 //        FamilyInvitation invitation = familyInvitationRepository.findInvitation(user.getUserId(), family.getId());
 //        if(invitation != null) {
 //            familyInvitationRepository.delete(invitation);
