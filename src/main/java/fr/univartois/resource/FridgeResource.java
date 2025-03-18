@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import fr.univartois.model.*;
-import fr.univartois.service.FridgeService;
 import jakarta.annotation.security.RolesAllowed;
+import fr.univartois.services.FridgeService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;

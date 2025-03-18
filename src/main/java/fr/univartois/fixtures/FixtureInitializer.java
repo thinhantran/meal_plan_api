@@ -1,5 +1,6 @@
 package fr.univartois.fixtures;
 
+import fr.univartois.repository.IngredientRepository;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -21,13 +22,28 @@ public class FixtureInitializer {
     @Inject
     PasswordAuthFixture passwordAuthFixture;
 
+    @Inject
+    IngredientFixture ingredientFixture;
+
+    @Inject
+    RecipeFixture recipeFixture;
+
+    @Inject
+    MealFixture mealFixture;
+
     public void generateFixtures(@Observes StartupEvent ev) {
         if (realFixturesEnabled) {
             userFixture.generateRealData();
             passwordAuthFixture.generateRealData();
+            ingredientFixture.generateRealData();
+            recipeFixture.generateRealData();
+            mealFixture.generateRealData();
         } else if (fakeFixturesEnabled) {
             userFixture.generateFakeData();
             passwordAuthFixture.generateFakeData();
+            ingredientFixture.generateFakeData();
+            recipeFixture.generateFakeData();
+            mealFixture.generateFakeData();
         }
     }
 }

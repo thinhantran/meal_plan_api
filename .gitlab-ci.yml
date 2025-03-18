@@ -1,0 +1,36 @@
+stages:
+  - integration
+
+default:
+  tags:
+    - k8s-etu
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+
+services:
+  - name: docker:dind
+    command: ["--tls=false"]
+
+build:
+  stage: integration
+  image: registry.etu-k8s.lan/docker-hub/maven:3.9.9-eclipse-temurin-21
+  script:
+    - mvn $MAVEN_CLI_OPTS compile
+  artifacts:
+    paths:
+      - target/
+    expire_in: 5 minutes
+
+unit-tests:
+  stage: integration
+  image: registry.etu-k8s.lan/docker-hub/maven:3.9.9-eclipse-temurin-21
+  script:
+    - mvn $MAVEN_CLI_OPTS clean test jacoco:report
+  artifacts:
+    paths:
+      - target/site/jacoco
+    expire_in: 15 minutes

@@ -1,4 +1,4 @@
-package fr.univartois.service;
+package fr.univartois.services;
 
 import fr.univartois.model.*;
 import fr.univartois.model.IngredientFridgeQuantityInput;
