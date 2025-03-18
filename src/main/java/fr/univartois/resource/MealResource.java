@@ -33,7 +33,7 @@ import jakarta.ws.rs.core.MediaType;
     @SecurityScheme(
         bearerFormat = "JWT",
         scheme = "bearer",
-        securitySchemeName = "AccessBearerAuthentification",
+        securitySchemeName = "AccessBearerAuthentication",
         apiKeyName = "Authroization",
         type = SecuritySchemeType.HTTP,
         description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
@@ -41,7 +41,7 @@ import jakarta.ws.rs.core.MediaType;
     )
 })
 @RolesAllowed("access")
-@SecurityRequirement(name = "AccessBearerAuthentification")
+@SecurityRequirement(name = "AccessBearerAuthentication")
 public class MealResource {
 
   @Inject

@@ -2,6 +2,13 @@ package fr.univartois.resource;
 
 import java.util.List;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
+
 import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
@@ -11,15 +18,16 @@ import fr.univartois.service.FamilyService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
-import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
 @Path("/families/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,7 +36,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
         @SecurityScheme(
                 bearerFormat = "JWT",
                 scheme = "bearer",
-                securitySchemeName = "AccessBearerAuthentification",
+                securitySchemeName = "AccessBearerAuthentication",
                 apiKeyName = "Authorization",
                 type = SecuritySchemeType.HTTP,
                 description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
@@ -36,7 +44,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
         )
 })
 @RolesAllowed("access")
-@SecurityRequirement(name = "AccessBearerAuthentification")
+@SecurityRequirement(name = "AccessBearerAuthentication")
 public class FamilyResource {
 
   @Inject

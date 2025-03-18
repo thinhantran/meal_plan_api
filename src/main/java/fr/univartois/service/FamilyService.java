@@ -1,17 +1,15 @@
 package fr.univartois.service;
 
+import java.util.List;
+
 import fr.univartois.model.Family;
-//import fr.univartois.model.FamilyInvitation;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
-//import fr.univartois.repository.FamilyInvitationRepository;
 import fr.univartois.repository.FamilyRepository;
 import fr.univartois.repository.MemberRoleRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
-
-import java.util.List;
 
 @ApplicationScoped
 public class FamilyService {

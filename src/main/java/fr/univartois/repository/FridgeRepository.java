@@ -1,5 +1,8 @@
 package fr.univartois.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
 import fr.univartois.model.IngredientFridgeQuantity;
@@ -8,8 +11,6 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Optional;
 
 @ApplicationScoped
 public class FridgeRepository implements PanacheRepository<Fridge> {
@@ -27,7 +28,7 @@ public class FridgeRepository implements PanacheRepository<Fridge> {
 
     public List<IngredientFridgeQuantity> findIngredientsInFridge(int familyId) {
         return entityManager.createQuery(
-                        "SELECT i FROM IngredientFridgeQuantity i WHERE i.fridge.family.familyId = :familyId",
+                        "SELECT i FROM IngredientFridgeQuantity i WHERE i.fridge.family.id = :familyId",
                         IngredientFridgeQuantity.class)
                 .setParameter("familyId", familyId)
                 .getResultList();
@@ -98,7 +99,7 @@ public class FridgeRepository implements PanacheRepository<Fridge> {
 
     public List<IngredientFridgeQuantity> findIngredientByName(int familyId, String name) {
         return entityManager.createQuery(
-                        "SELECT i FROM IngredientFridgeQuantity i WHERE i.fridge.family.familyId = :familyId AND LOWER(i.ingredient.name) LIKE LOWER(:name)",
+                        "SELECT i FROM IngredientFridgeQuantity i WHERE i.fridge.family.id = :familyId AND LOWER(i.ingredient.name) LIKE LOWER(:name)",
                         IngredientFridgeQuantity.class)
                 .setParameter("familyId", familyId)
                 .setParameter("name", "%" + name + "%")

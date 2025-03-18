@@ -4,9 +4,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import fr.univartois.model.*;
-import jakarta.annotation.security.RolesAllowed;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
+
+import fr.univartois.model.Fridge;
+import fr.univartois.model.Ingredient;
+import fr.univartois.model.IngredientCategory;
+import fr.univartois.model.IngredientFridgeQuantity;
+import fr.univartois.model.IngredientFridgeQuantityInput;
+import fr.univartois.model.IngredientRemove;
+import fr.univartois.model.Utensil;
+import fr.univartois.model.UtensilInput;
 import fr.univartois.services.FridgeService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -18,12 +32,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
-import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
 
 @Path("/fridge/{familyId}")
@@ -33,7 +41,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
         @SecurityScheme(
                 bearerFormat = "JWT",
                 scheme = "bearer",
-                securitySchemeName = "AccessBearerAuthentification",
+                securitySchemeName = "AccessBearerAuthentication",
                 apiKeyName = "Authorization",
                 type = SecuritySchemeType.HTTP,
                 description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
@@ -41,7 +49,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
         )
 })
 @RolesAllowed("access")
-@SecurityRequirement(name = "AccessBearerAuthentification")
+@SecurityRequirement(name = "AccessBearerAuthentication")
 public class FridgeResource {
 
   @Inject

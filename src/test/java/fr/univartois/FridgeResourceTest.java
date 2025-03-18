@@ -1,19 +1,26 @@
 package fr.univartois;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import fr.univartois.model.Family;
-import org.junit.jupiter.api.*;
-
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FridgeResourceTest {
 
-    private static int FAMILY_ID;
-    private static int INGREDIENT_FRIDGE_ID;
+    private static long FAMILY_ID;
+    private static long INGREDIENT_FRIDGE_ID;
 
     static void setup() {
 
@@ -26,7 +33,7 @@ class FridgeResourceTest {
                 .statusCode(201)
                 .extract().body().as(Family.class);
 
-        FAMILY_ID = createdFamily.getFamilyId();
+        FAMILY_ID = createdFamily.getId();
 
         given().when()
                 .contentType("application/json")

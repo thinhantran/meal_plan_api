@@ -14,11 +14,7 @@ import fr.univartois.model.Recipe;
 import fr.univartois.services.RecipeService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
@@ -29,7 +25,7 @@ import jakarta.ws.rs.core.MediaType;
     @SecurityScheme(
         bearerFormat = "JWT",
         scheme = "bearer",
-        securitySchemeName = "AccessBearerAuthentification",
+        securitySchemeName = "AccessBearerAuthentication",
         apiKeyName = "Authroization",
         type = SecuritySchemeType.HTTP,
         description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
@@ -37,7 +33,7 @@ import jakarta.ws.rs.core.MediaType;
     )
 })
 @RolesAllowed("access")
-@SecurityRequirement(name = "AccessBearerAuthentification")
+@SecurityRequirement(name = "AccessBearerAuthentication")
 public class RecipeResource {
 
   @Inject

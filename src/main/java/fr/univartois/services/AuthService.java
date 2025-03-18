@@ -4,7 +4,6 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-import java.util.Set;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -48,6 +47,15 @@ public class AuthService {
     passwordAuth.setUser(user);
     passwordAuthRepository.persist(passwordAuth);
     return user;
+  }
+
+  @Transactional
+  public void updateUserWithNewPassword(PasswordAuth passwordAuth, String newPassword) {
+    byte[] salt = generateSalt();
+    String newPasswordEncrypted = encryptPassword(newPassword, salt);
+    passwordAuth.setSalt(salt);
+    passwordAuth.setPassword(newPasswordEncrypted);
+    passwordAuthRepository.getEntityManager().merge(passwordAuth);
   }
 
   public PasswordAuth findUser(String username) {

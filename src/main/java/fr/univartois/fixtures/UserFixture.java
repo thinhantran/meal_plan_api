@@ -1,12 +1,12 @@
 package fr.univartois.fixtures;
 
+import java.util.Arrays;
+
 import fr.univartois.model.User;
 import fr.univartois.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.Arrays;
 
 @ApplicationScoped
 public class UserFixture extends Fixture {

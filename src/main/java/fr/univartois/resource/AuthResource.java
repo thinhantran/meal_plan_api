@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -28,10 +29,19 @@ import jakarta.ws.rs.core.Response;
     @SecurityScheme(
         bearerFormat = "JWT",
         scheme = "bearer",
-        securitySchemeName = "RefreshBearerAuthentification",
+        securitySchemeName = "RefreshBearerAuthentication",
         apiKeyName = "Authroization",
         type = SecuritySchemeType.HTTP,
         description = "Uses the refresh token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
+        in = SecuritySchemeIn.HEADER
+    ),
+    @SecurityScheme(
+        bearerFormat = "JWT",
+        scheme = "bearer",
+        securitySchemeName = "AccessBearerAuthentication",
+        apiKeyName = "Authroization",
+        type = SecuritySchemeType.HTTP,
+        description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
         in = SecuritySchemeIn.HEADER
     )
 })
@@ -61,6 +71,24 @@ public class AuthResource {
     return Response.status(Response.Status.CREATED).entity(customJwtPair).build();
   }
 
+  @PUT
+  @Path("/users")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("access")
+  @SecurityRequirement(name = "AccessBearerAuthentication")
+  public Response changePassword(@FormParam("oldPassword") String oldPassword, @FormParam("newPassword") String newPassword) {
+    PasswordAuth targetedUser = authService.findUser(jwt.getSubject());
+    if (targetedUser == null) {
+      return Response.status(Response.Status.PRECONDITION_FAILED).build();
+    }
+    if (!authService.comparePassword(targetedUser, oldPassword)) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    authService.updateUserWithNewPassword(targetedUser, newPassword);
+    return Response.status(Response.Status.NO_CONTENT).build();
+  }
+
   @POST
   @Path("/login/user")
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -82,7 +110,7 @@ public class AuthResource {
   @POST
   @Path("/login/token")
   @Produces(MediaType.APPLICATION_JSON)
-  @SecurityRequirement(name = "RefreshBearerAuthentification")
+  @SecurityRequirement(name = "RefreshBearerAuthentication")
   public Response loginWithToken() {
     User user = authService.hasAssociatedUser(jwt);
     if (user == null) {
@@ -96,7 +124,7 @@ public class AuthResource {
   @POST
   @Path("/logout")
   @Produces(MediaType.APPLICATION_JSON)
-  @SecurityRequirement(name = "RefreshBearerAuthentification")
+  @SecurityRequirement(name = "RefreshBearerAuthentication")
   public Response logout() {
     User user = authService.hasAssociatedUser(jwt);
     if (user != null) {

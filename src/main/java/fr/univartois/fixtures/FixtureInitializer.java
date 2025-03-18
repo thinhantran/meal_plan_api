@@ -1,11 +1,11 @@
 package fr.univartois.fixtures;
 
-import fr.univartois.repository.IngredientRepository;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class FixtureInitializer {

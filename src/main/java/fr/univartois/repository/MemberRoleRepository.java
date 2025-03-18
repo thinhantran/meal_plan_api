@@ -1,5 +1,7 @@
 package fr.univartois.repository;
 
+import java.util.List;
+
 import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
@@ -7,8 +9,6 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.BadRequestException;
-
-import java.util.List;
 
 @ApplicationScoped
 public class MemberRoleRepository implements PanacheRepository<MemberRole> {

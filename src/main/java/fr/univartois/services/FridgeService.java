@@ -1,17 +1,22 @@
 package fr.univartois.services;
 
-import fr.univartois.model.*;
+import java.util.List;
+import java.util.Optional;
+
+import fr.univartois.model.Family;
+import fr.univartois.model.Fridge;
+import fr.univartois.model.Ingredient;
+import fr.univartois.model.IngredientFridgeQuantity;
 import fr.univartois.model.IngredientFridgeQuantityInput;
+import fr.univartois.model.IngredientRemove;
+import fr.univartois.model.IngredientUnit;
+import fr.univartois.model.Utensil;
+import fr.univartois.model.UtensilInput;
 import fr.univartois.repository.FamilyRepository;
 import fr.univartois.repository.FridgeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @ApplicationScoped
 public class FridgeService {
@@ -126,7 +131,7 @@ public class FridgeService {
         IngredientFridgeQuantity ingredientFridgeQuantity = fridgeRepository.findIngredientFridgeQuantityById(ingredientFridgeQuantityId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found in fridge for ID: " + ingredientFridgeQuantityId));
 
-        if (ingredientFridgeQuantity.getFridge().getFamily().getFamilyId() != familyId) {
+        if (ingredientFridgeQuantity.getFridge().getFamily().getId() != familyId) {
             throw new IllegalArgumentException("Ingredient does not belong to the specified family fridge.");
         }
 
@@ -180,7 +185,7 @@ public class FridgeService {
             throw new IllegalArgumentException("Ingredient not found in fridge for ID: " + ingredientFridgeQuantityId);
         }
         IngredientFridgeQuantity ingredientFridgeQuantity = ingredientFridgeQuantityOpt.get();
-        if (ingredientFridgeQuantity.getFridge().getFamily().getFamilyId() != familyId) {
+        if (ingredientFridgeQuantity.getFridge().getFamily().getId() != familyId) {
             throw new IllegalArgumentException("Ingredient does not belong to the specified family fridge.");
         }
         if (ingredientFridgeQuantity.getMeasurementUnit() != request.getMeasurementUnit()) {

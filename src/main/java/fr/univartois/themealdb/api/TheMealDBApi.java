@@ -5,7 +5,6 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import fr.univartois.themealdb.dto.CategoriesDTO;
 import fr.univartois.themealdb.dto.IngredientsDTO;
 import fr.univartois.themealdb.dto.RecipesDTO;
-import fr.univartois.themealdb.dto.RecipesDTO.RecipeDTO;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;

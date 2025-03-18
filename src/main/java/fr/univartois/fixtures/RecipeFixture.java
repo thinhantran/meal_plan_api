@@ -12,8 +12,6 @@ import fr.univartois.model.Recipe;
 import fr.univartois.repository.IngredientRepository;
 import fr.univartois.repository.RecipeRepository;
 import fr.univartois.themealdb.api.TheMealDBApi;
-import fr.univartois.themealdb.dto.CategoriesDTO.CategoryDTO;
-import fr.univartois.themealdb.dto.RecipesDTO;
 import fr.univartois.themealdb.dto.RecipesDTO.RecipeDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
