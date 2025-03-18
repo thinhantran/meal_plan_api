@@ -6,4 +6,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class FamilyRepository implements PanacheRepository<Family> {
+
+    public Family findFamilyByCode(String familyCode) {
+        return find("code", familyCode).singleResultOptional().orElse(null);
+    }
+
 }

@@ -1,28 +1,29 @@
 package fr.univartois.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberRole {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Long id;
 
   @OneToOne
-  @JoinColumn(name = "user_id", nullable = false, unique = true)
+  @JoinColumn(name = "user_id", referencedColumnName = "userId")
   private User user;
 
   @ManyToOne
-  @JoinColumn(name = "family_id", nullable = false)
   private Family family;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "role", nullable = false)
   private Role category;
 
   public enum Role {
