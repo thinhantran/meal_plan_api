@@ -130,5 +130,13 @@ public class FridgeRepository implements PanacheRepository<Fridge> {
                 .getResultList();
     }
 
-
+    public Optional<IngredientFridgeQuantity> findIngredientFridgeQuantityByFridgeAndIngredient(Fridge fridge, Ingredient ingredient) {
+        return entityManager.createQuery(
+                        "SELECT i FROM IngredientFridgeQuantity i WHERE i.fridge = :fridge AND i.ingredient = :ingredient",
+                        IngredientFridgeQuantity.class)
+                .setParameter("fridge", fridge)
+                .setParameter("ingredient", ingredient)
+                .getResultStream()
+                .findFirst();
+    }
 }

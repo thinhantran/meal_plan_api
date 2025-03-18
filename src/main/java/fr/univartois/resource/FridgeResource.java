@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import fr.univartois.model.*;
+import jakarta.annotation.security.RolesAllowed;
 import fr.univartois.services.FridgeService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -17,12 +18,37 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
+
 
 @Path("/fridge/{familyId}")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@SecuritySchemes(value = {
+        @SecurityScheme(
+                bearerFormat = "JWT",
+                scheme = "bearer",
+                securitySchemeName = "AccessBearerAuthentification",
+                apiKeyName = "Authorization",
+                type = SecuritySchemeType.HTTP,
+                description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
+                in = SecuritySchemeIn.HEADER
+        )
+})
+@RolesAllowed("access")
+@SecurityRequirement(name = "AccessBearerAuthentification")
 public class FridgeResource {
 
   @Inject
   FridgeService fridgeService;
+
+  @Inject
+  JsonWebToken jwt;
 
   @POST
   @Path("/create")
@@ -56,6 +82,21 @@ public class FridgeResource {
                                               IngredientFridgeQuantityInput ingredientFridgeQuantityInput) {
     IngredientFridgeQuantity addedIngredient = fridgeService.addIngredient(familyId, ingredientFridgeQuantityInput);
     return Response.status(Response.Status.CREATED).entity(addedIngredient).build();
+  }
+
+  @POST
+  @Path("/ingredients/{ingredientFridgeQuantityId}/remove")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response removeIngredientQuantity(@PathParam("familyId") int familyId,
+                                           @PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId,
+                                           IngredientRemove request) {
+    try {
+      IngredientFridgeQuantity updatedIngredient = fridgeService.removeIngredientQuantity(familyId, ingredientFridgeQuantityId, request);
+      return Response.ok(updatedIngredient).build();
+    } catch (IllegalArgumentException e) {
+      return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+    }
   }
 
   @PUT
