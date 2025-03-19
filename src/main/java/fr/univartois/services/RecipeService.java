@@ -10,6 +10,7 @@ import fr.univartois.model.Recipe;
 import fr.univartois.repository.IngredientRepository;
 import fr.univartois.repository.RecipeRepository;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -28,7 +29,7 @@ public class RecipeService {
   }
 
   public List<Recipe> getRecipes(int offset, int limit) {
-    return recipeRepository.findAll().page(Page.of(offset, limit)).list();
+    return recipeRepository.findAll(Sort.ascending("recipeId")).page(Page.of(offset, limit)).list();
   }
 
   public List<Recipe> searchRecipesByName(String name) {
