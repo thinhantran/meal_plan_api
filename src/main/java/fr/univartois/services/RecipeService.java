@@ -9,6 +9,7 @@ import fr.univartois.model.IngredientCategory;
 import fr.univartois.model.Recipe;
 import fr.univartois.repository.IngredientRepository;
 import fr.univartois.repository.RecipeRepository;
+import io.quarkus.panache.common.Page;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -24,6 +25,10 @@ public class RecipeService {
 
   public Recipe getRecipe(Long id) {
     return recipeRepository.findById(id);
+  }
+
+  public List<Recipe> getRecipes(int offset, int limit) {
+    return recipeRepository.findAll().page(Page.of(offset, limit)).list();
   }
 
   public List<Recipe> searchRecipesByName(String name) {
