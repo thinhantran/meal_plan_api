@@ -2,6 +2,7 @@ package fr.univartois.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -31,6 +32,6 @@ public class Ingredient {
   private IngredientCategory category = IngredientCategory.MISCELLANEOUS;
 
   @OneToMany(fetch = FetchType.EAGER)
-  @JsonManagedReference("ingredient")
+  @JsonBackReference("ingredient")
   private List<IngredientRecipeQuantity> recipes;
 }

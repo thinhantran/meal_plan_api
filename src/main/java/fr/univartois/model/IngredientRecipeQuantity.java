@@ -1,6 +1,7 @@
 package fr.univartois.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +22,7 @@ public class IngredientRecipeQuantity {
   private Long ingredientRecipeQuantityId;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JsonBackReference("ingredient")
+  @JsonManagedReference("ingredient")
   private Ingredient ingredient;
 
   @ManyToOne
