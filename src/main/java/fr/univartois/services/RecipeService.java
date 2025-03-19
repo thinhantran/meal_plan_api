@@ -44,9 +44,10 @@ public class RecipeService {
     return recipeRepository.list("category", category);
   }
 
-  public List<RecipePerIngredient> searchRecipesByIngredient(@Nonnull String ingredientName) {
+  public List<RecipePerIngredient> searchRecipesByIngredient(@Nonnull String ingredientName, int offset, int limit) {
     return ingredientRecipeQuantityRepository.find("SELECT irq.recipe, irq.ingredient FROM IngredientRecipeQuantity irq " +
-            "WHERE irq.ingredient.name LIKE CONCAT('%',?1,'%')", ingredientName)
+            "WHERE irq.ingredient.name LIKE CONCAT('%',?1,'%')", Sort.ascending("irq.ingredient.name", "irq.recipe.name"), ingredientName)
+        .page(offset, limit)
         .project(RecipePerIngredient.class)
         .list();
   }

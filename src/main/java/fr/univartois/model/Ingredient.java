@@ -27,10 +27,6 @@ public class Ingredient {
   @Column(nullable = false, unique = true)
   private String name;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private IngredientCategory category = IngredientCategory.MISCELLANEOUS;
-
   @OneToMany(fetch = FetchType.EAGER)
   @JsonBackReference("ingredient")
   private List<IngredientRecipeQuantity> recipes;

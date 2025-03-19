@@ -70,7 +70,8 @@ public class RecipeResource {
   @Path("/byIngredient")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<RecipePerIngredient> searchPerIngredient(@QueryParam("name") String name) {
-    return recipeService.searchRecipesByIngredient(name);
+  public List<RecipePerIngredient> searchPerIngredient(@QueryParam("name") String name, @QueryParam("offset") int offset,
+      @QueryParam("limit") int limit) {
+    return recipeService.searchRecipesByIngredient(name, offset, limit);
   }
 }
