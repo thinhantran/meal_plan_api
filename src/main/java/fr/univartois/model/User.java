@@ -24,7 +24,7 @@ public class User {
   @Column(unique = true, nullable = false)
   private String username;
 
-  @OneToOne
+  @OneToOne(cascade = CascadeType.ALL)
   @JsonBackReference("user")
   private MemberRole memberRole;
 

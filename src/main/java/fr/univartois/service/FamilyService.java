@@ -31,6 +31,7 @@ public class FamilyService {
         memberRole.setCategory(MemberRole.Role.MANAGER);
         family.addMember(memberRole);
         family.setName(name);
+        user.setMemberRole(memberRole);
         memberRoleRepository.persist(memberRole);
         familyRepository.persist(family);
         return Response.status(Response.Status.CREATED).entity(family).build();
