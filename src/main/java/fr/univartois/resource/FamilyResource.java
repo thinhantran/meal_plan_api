@@ -110,4 +110,5 @@ public class FamilyResource {
     User user = userRepository.findByUsername(jwt.getSubject());
     return familyService.createFamily(user, name);
   }
+
 }
