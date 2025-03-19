@@ -27,6 +27,6 @@ public class Utensil {
 
   @ManyToOne
   @JoinColumn(name = "fridge_id")
-  @JsonBackReference
+  @JsonBackReference("utensils")
   private Fridge fridge;
 }

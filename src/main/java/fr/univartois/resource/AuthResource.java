@@ -78,7 +78,7 @@ public class AuthResource {
   @RolesAllowed("access")
   @SecurityRequirement(name = "AccessBearerAuthentication")
   public Response changePassword(@FormParam("oldPassword") String oldPassword, @FormParam("newPassword") String newPassword) {
-    PasswordAuth targetedUser = authService.findUser(jwt.getSubject());
+    PasswordAuth targetedUser = authService.findPasswordAuth(jwt.getSubject());
     if (targetedUser == null) {
       return Response.status(Response.Status.PRECONDITION_FAILED).build();
     }
@@ -94,7 +94,7 @@ public class AuthResource {
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
   public Response login(@FormParam("username") String username, @FormParam("password") String password) {
-    PasswordAuth auth = authService.findUser(username);
+    PasswordAuth auth = authService.findPasswordAuth(username);
     if (auth == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }

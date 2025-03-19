@@ -31,6 +31,6 @@ public class Ingredient {
   private IngredientCategory category = IngredientCategory.MISCELLANEOUS;
 
   @OneToMany(fetch = FetchType.EAGER)
-  @JsonManagedReference
+  @JsonManagedReference("ingredient")
   private List<IngredientRecipeQuantity> recipes;
 }

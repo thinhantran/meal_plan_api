@@ -1,25 +1,20 @@
 package fr.univartois.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 @Entity
+@EqualsAndHashCode
 public class Family {
 
   static private final int LENGTHCODE = 6;
@@ -36,6 +31,11 @@ public class Family {
 
   @Column(unique = true, length = LENGTHCODE)
   private String code;
+
+  @JoinColumn(unique = true)
+  @OneToOne(cascade = CascadeType.ALL)
+  @JsonManagedReference("family")
+  private Fridge fridge;
 
   public void addMember(MemberRole memberRole) {
     memberRoles.add(memberRole);

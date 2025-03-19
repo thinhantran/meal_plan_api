@@ -21,11 +21,11 @@ public class IngredientRecipeQuantity {
   private Long ingredientRecipeQuantityId;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JsonBackReference
+  @JsonBackReference("ingredient")
   private Ingredient ingredient;
 
   @ManyToOne
-  @JsonBackReference
+  @JsonBackReference("recipe")
   private Recipe recipe;
 
   private String quantity;

@@ -2,6 +2,7 @@ package fr.univartois.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -27,13 +28,14 @@ public class Fridge {
 
   @OneToOne
   @JoinColumn(name = "family_id", nullable = false)
+  @JsonBackReference("family")
   private Family family;
 
   @OneToMany(mappedBy = "fridge", fetch = FetchType.EAGER)
-  @JsonManagedReference
+  @JsonManagedReference("fridge")
   private List<IngredientFridgeQuantity> ingredients;
 
   @OneToMany(mappedBy = "fridge",cascade = CascadeType.PERSIST, orphanRemoval = true)
-  @JsonManagedReference
+  @JsonManagedReference("utensils")
   private List<Utensil> ustensils;
 }

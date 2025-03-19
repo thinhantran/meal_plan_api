@@ -3,10 +3,7 @@ package fr.univartois.repository;
 import java.util.List;
 import java.util.Optional;
 
-import fr.univartois.model.Fridge;
-import fr.univartois.model.Ingredient;
-import fr.univartois.model.IngredientFridgeQuantity;
-import fr.univartois.model.Utensil;
+import fr.univartois.model.*;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -35,11 +32,12 @@ public class FridgeRepository implements PanacheRepository<Fridge> {
     }
 
 
-    public Optional<Fridge> findFridgeByFamilyId(int familyId) {
-        return entityManager.createQuery("SELECT f FROM Fridge f WHERE f.family.id = :familyId", Fridge.class)
-                .setParameter("familyId", familyId)
-                .getResultStream()
-                .findFirst();
+    public Optional<Fridge> findFridgeByFamily(long familyId) {
+        return Optional.ofNullable(find("family.id", familyId).firstResult());
+    }
+
+    public Fridge findFridgeByFamily(Family family) {
+        return find("family", family).firstResult();
     }
 
     public Optional<Ingredient> findIngredientByName(String name) {
@@ -81,7 +79,7 @@ public class FridgeRepository implements PanacheRepository<Fridge> {
         return entityManager.merge(ingredientFridgeQuantity);
     }
 
-    public Optional<IngredientFridgeQuantity> findIngredientInFridge(int familyId, int ingredientFridgeQuantityId) {
+    public Optional<IngredientFridgeQuantity> findIngredientInFridge(long familyId, int ingredientFridgeQuantityId) {
         return entityManager.createQuery(
                         "SELECT i FROM IngredientFridgeQuantity i WHERE i.fridge.family.id = :familyId AND i.ingredientFridgeQuantityId = :ingredientFridgeQuantityId",
                         IngredientFridgeQuantity.class)
@@ -97,7 +95,7 @@ public class FridgeRepository implements PanacheRepository<Fridge> {
                 : entityManager.merge(ingredientFridgeQuantity));
     }
 
-    public List<IngredientFridgeQuantity> findIngredientByName(int familyId, String name) {
+    public List<IngredientFridgeQuantity> findIngredientByName(long familyId, String name) {
         return entityManager.createQuery(
                         "SELECT i FROM IngredientFridgeQuantity i WHERE i.fridge.family.id = :familyId AND LOWER(i.ingredient.name) LIKE LOWER(:name)",
                         IngredientFridgeQuantity.class)
@@ -108,15 +106,6 @@ public class FridgeRepository implements PanacheRepository<Fridge> {
 
     public Optional<Utensil> findUtensilById(int utensilId) {
         return Optional.ofNullable(entityManager.find(Utensil.class, utensilId));
-    }
-
-    public Optional<Utensil> findUtensilByNameAndFridgeId(String name, int fridgeId) {
-        return entityManager.createQuery(
-                        "SELECT u FROM Utensil u WHERE LOWER(u.name) = LOWER(:name) AND u.fridge.fridgeId = :fridgeId", Utensil.class)
-                .setParameter("name", name)
-                .setParameter("fridgeId", fridgeId)
-                .getResultStream()
-                .findFirst();
     }
 
 

@@ -31,7 +31,7 @@ public class IngredientFridgeQuantity {
 
   @ManyToOne
   @JoinColumn(name = "fridge_id", nullable = false)
-  @JsonBackReference
+  @JsonBackReference("fridge")
   private Fridge fridge;
 
   @Column(nullable = false)

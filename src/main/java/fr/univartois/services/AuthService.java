@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
+import fr.univartois.repository.UserRepository;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import fr.univartois.dtos.CustomJwtAccess;
@@ -30,9 +31,12 @@ public class AuthService {
 
   TokenAuthRepository tokenAuthRepository;
 
-  public AuthService(PasswordAuthRepository passwordAuthRepository, TokenAuthRepository tokenAuthRepository) {
+  UserRepository userRepository;
+
+  public AuthService(PasswordAuthRepository passwordAuthRepository, TokenAuthRepository tokenAuthRepository, UserRepository userRepository) {
     this.passwordAuthRepository = passwordAuthRepository;
     this.tokenAuthRepository = tokenAuthRepository;
+    this.userRepository = userRepository;
   }
 
   @Transactional
@@ -58,8 +62,12 @@ public class AuthService {
     passwordAuthRepository.getEntityManager().merge(passwordAuth);
   }
 
-  public PasswordAuth findUser(String username) {
+  public PasswordAuth findPasswordAuth(String username) {
     return passwordAuthRepository.find("user.username", username).firstResult();
+  }
+
+  public User findUser(String username) {
+    return userRepository.find("username", username).firstResult();
   }
 
   public boolean comparePassword(PasswordAuth passwordAuth, String password) {

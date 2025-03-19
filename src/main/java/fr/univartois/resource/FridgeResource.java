@@ -2,6 +2,7 @@ package fr.univartois.resource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -34,7 +35,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 
-@Path("/fridge/{familyId}")
+@Path("/fridge")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @SecuritySchemes(value = {
@@ -59,26 +60,25 @@ public class FridgeResource {
   JsonWebToken jwt;
 
   @POST
-  @Path("/create")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createFridgeForFamily(@PathParam("familyId") int familyId) {
-    Fridge fridge = fridgeService.createFridge(familyId);
+  public Response createFridgeForFamily() {
+    Fridge fridge = fridgeService.createFridge(jwt);
     return Response.status(Response.Status.CREATED).entity(fridge).build();
   }
 
   @GET
   @Path("/ingredients/all")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<Ingredient> getIngredients(@PathParam("familyId") int familyId) {
-    return fridgeService.getIngredients(familyId);
+  public Set<Ingredient> getIngredients() {
+    return fridgeService.getIngredients(jwt);
   }
 
   @GET
   @Path("/ingredients")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<IngredientFridgeQuantity> getIngredientsFromFamilyFridge(@PathParam("familyId") int familyId) {
-    return fridgeService.getIngredientsInFridge(familyId);
+  public List<IngredientFridgeQuantity> getIngredientsFromFamilyFridge() {
+    return fridgeService.getIngredientsInFridge(jwt);
   }
 
 
@@ -86,9 +86,8 @@ public class FridgeResource {
   @Path("/ingredients")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response addIngredientToFamilyFridge(@PathParam("familyId") int familyId,
-                                              IngredientFridgeQuantityInput ingredientFridgeQuantityInput) {
-    IngredientFridgeQuantity addedIngredient = fridgeService.addIngredient(familyId, ingredientFridgeQuantityInput);
+  public Response addIngredientToFamilyFridge(IngredientFridgeQuantityInput ingredientFridgeQuantityInput) {
+    IngredientFridgeQuantity addedIngredient = fridgeService.addIngredient(jwt, ingredientFridgeQuantityInput);
     return Response.status(Response.Status.CREATED).entity(addedIngredient).build();
   }
 
@@ -96,11 +95,10 @@ public class FridgeResource {
   @Path("/ingredients/{ingredientFridgeQuantityId}/remove")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response removeIngredientQuantity(@PathParam("familyId") int familyId,
-                                           @PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId,
+  public Response removeIngredientQuantity(@PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId,
                                            IngredientRemove request) {
     try {
-      IngredientFridgeQuantity updatedIngredient = fridgeService.removeIngredientQuantity(familyId, ingredientFridgeQuantityId, request);
+      IngredientFridgeQuantity updatedIngredient = fridgeService.removeIngredientQuantity(jwt, ingredientFridgeQuantityId, request);
       return Response.ok(updatedIngredient).build();
     } catch (IllegalArgumentException e) {
       return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -111,10 +109,9 @@ public class FridgeResource {
   @Path("/ingredients/{ingredientFridgeQuantityId}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response editIngredientFromFamilyFridge(@PathParam("familyId") int familyId,
-      @PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId,
+  public Response editIngredientFromFamilyFridge(@PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId,
       IngredientFridgeQuantityInput ingredientFridgeQuantityInput) {
-    IngredientFridgeQuantity updatedIngredient = fridgeService.updateIngredient(familyId, ingredientFridgeQuantityId, ingredientFridgeQuantityInput);
+    IngredientFridgeQuantity updatedIngredient = fridgeService.updateIngredient(jwt, ingredientFridgeQuantityId, ingredientFridgeQuantityInput);
     return Response.ok(updatedIngredient).build();
   }
 
@@ -122,18 +119,16 @@ public class FridgeResource {
   @Path("/ingredients/{ingredientFridgeQuantityId}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response removeIngredientFromFamilyFridge(@PathParam("familyId") int familyId,
-      @PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId) {
-    fridgeService.removeIngredient(familyId, ingredientFridgeQuantityId);
+  public Response removeIngredientFromFamilyFridge(@PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId) {
+    fridgeService.removeIngredient(jwt, ingredientFridgeQuantityId);
     return Response.noContent().build();
   }
 
   @GET
   @Path("/ingredients/search/{ingredientFridgeQuantityId}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getIngredientFromFamilyFridge(@PathParam("familyId") int familyId,
-                                                @PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId) {
-    IngredientFridgeQuantity ingredient = fridgeService.getIngredientFridgeQuantity(familyId, ingredientFridgeQuantityId);
+  public Response getIngredientFromFamilyFridge(@PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId) {
+    IngredientFridgeQuantity ingredient = fridgeService.getIngredientFridgeQuantity(jwt, ingredientFridgeQuantityId);
     System.out.println("Ingredient :" +ingredient);
     if (ingredient != null) {
       return Response.ok(ingredient).build();
@@ -147,53 +142,44 @@ public class FridgeResource {
   @GET
   @Path("/ingredients/{name}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response searchIngredientByName(@PathParam("familyId") int familyId,
-                                         @PathParam("name") String name) {
+  public Response searchIngredientByName(@PathParam("name") String name) {
     System.out.println("Entering searchIngredientByName with name = " + name);
-    List<IngredientFridgeQuantity> ingredients = fridgeService.searchIngredientByName(familyId, name);
+    List<IngredientFridgeQuantity> ingredients = fridgeService.searchIngredientByName(jwt, name);
     if (ingredients.isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND).entity("Ingredient not found fd,gdfgt,dt").build();
     }
     return Response.ok(ingredients).build();
   }
 
-
-  @GET
-  @Path("/categories")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Map<IngredientCategory, List<Ingredient>> getIngredientsGroupedByCategory(int familyId) {
-    List<Ingredient> ingredients = fridgeService.getIngredients(familyId);
-    return ingredients.stream().collect(Collectors.groupingBy(Ingredient::getCategory));
-  }
   @GET
   @Path("/utensils")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<Utensil> getUtensilsFromFamilyFridge(@PathParam("familyId") int familyId) {
-    return fridgeService.getUtensils(familyId);
+  public List<Utensil> getUtensilsFromFamilyFridge() {
+    return fridgeService.getUtensils(jwt);
   }
 
 
   @GET
   @Path("/utensils/{utensilId}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response doesFamilyHaveUtensil(@PathParam("familyId") int familyId, @PathParam("utensilId") int utensilId) {
-    boolean exists = fridgeService.hasUtensil(familyId, utensilId);
+  public Response doesFamilyHaveUtensil(@PathParam("utensilId") int utensilId) {
+    boolean exists = fridgeService.hasUtensil(jwt, utensilId);
     return Response.ok(exists).build();
   }
 
   @POST
   @Path("/utensils")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response addUtensilToFamily(@PathParam("familyId") int familyId, UtensilInput utensil) {
-    fridgeService.addUtensil(familyId, utensil);
+  public Response addUtensilToFamily(UtensilInput utensil) {
+    fridgeService.addUtensil(jwt, utensil);
     return Response.status(Response.Status.CREATED).build();
   }
 
   @DELETE
   @Path("/utensils/{utensilId}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response removeUtensilToFamily(@PathParam("familyId") int familyId, @PathParam("utensilId") int utensilId) {
-    fridgeService.removeUtensil(familyId,utensilId);
+  public Response removeUtensilToFamily(@PathParam("utensilId") int utensilId) {
+    fridgeService.removeUtensil(jwt,utensilId);
     return Response.noContent().build();
   }
 }

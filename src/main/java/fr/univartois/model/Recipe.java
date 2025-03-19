@@ -20,9 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@NamedQueries({
-    @NamedQuery(name = "Recipe.searchByName", query = "SELECT r FROM Recipe r WHERE lower(name) LIKE CONCAT('%',?1,'%') ")
-})
+@NamedQuery(name = "Recipe.searchByName", query = "SELECT r FROM Recipe r WHERE lower(name) LIKE CONCAT('%',?1,'%') ")
 public class Recipe {
 
   @Id
@@ -34,7 +32,7 @@ public class Recipe {
   private String thumbnailUrl;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe", fetch = FetchType.EAGER)
-  @JsonManagedReference
+  @JsonManagedReference("recipe")
   private List<IngredientRecipeQuantity> ingredients;
 
   @Enumerated(EnumType.STRING)

@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
+import fr.univartois.dtos.CustomJwtPair;
+import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -19,25 +21,36 @@ import io.quarkus.test.junit.QuarkusTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FridgeResourceTest {
 
-    private static long FAMILY_ID;
-    private static long INGREDIENT_FRIDGE_ID;
+    private static long familyId;
+    private static long ingredientFridgeId;
+    private static CustomJwtPair customJwtPair;
 
     static void setup() {
 
-        String username = "testUser";
+        String username = "python";
+
+        customJwtPair = given().when()
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .formParam("username", username)
+                .formParam("password", "admin")
+                .post("/auth/login/user")
+                .then()
+                .statusCode(200)
+                .extract().as(CustomJwtPair.class);
 
         Family createdFamily = given().when()
-                .contentType("application/json")
-                .post("/families/{username}", username)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .post("/families")
                 .then()
                 .statusCode(201)
                 .extract().body().as(Family.class);
 
-        FAMILY_ID = createdFamily.getId();
+        familyId = createdFamily.getId();
 
         given().when()
                 .contentType("application/json")
-                .post("/fridge/{familyId}/create", FAMILY_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .post("/fridge")
                 .then()
                 .statusCode(201)
                 .body("fridgeId", is(notNullValue()));
@@ -47,7 +60,8 @@ class FridgeResourceTest {
     @Order(8)
     void testGetIngredients() {
         given().when()
-                .get("/fridge/{familyId}/ingredients/all", FAMILY_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .get("/fridge/ingredients/all")
                 .then()
                 .statusCode(200)
                 .body(is(not(empty())));
@@ -57,7 +71,8 @@ class FridgeResourceTest {
     @Order(7)
     void testGetIngredientsFromFamilyFridge() {
         given().when()
-                .get("/fridge/{familyId}/ingredients", FAMILY_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .get("/fridge/ingredients")
                 .then()
                 .statusCode(200)
                 .body(is(not(empty())));
@@ -77,10 +92,11 @@ class FridgeResourceTest {
         }
         """;
 
-        INGREDIENT_FRIDGE_ID = given().when()
+        ingredientFridgeId = given().when()
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
                 .contentType("application/json")
                 .body(requestBody)
-                .post("/fridge/{familyId}/ingredients", FAMILY_ID)
+                .post("/fridge/ingredients")
                 .then()
                 .statusCode(201)
                 .body("ingredient.name", is("Tomate"))
@@ -102,8 +118,9 @@ class FridgeResourceTest {
 
         given().when()
                 .contentType("application/json")
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
                 .body(requestBody)
-                .put("/fridge/{familyId}/ingredients/{ingredientFridgeQuantityId}", FAMILY_ID, INGREDIENT_FRIDGE_ID)
+                .put("/fridge/ingredients/{ingredientFridgeQuantityId}", ingredientFridgeId)
                 .then()
                 .statusCode(200)
                 .body("quantity", equalTo(10.0F));
@@ -113,7 +130,8 @@ class FridgeResourceTest {
     @Order(11)
     void testRemoveIngredientFromFamilyFridge() {
         given().when()
-                .delete("/fridge/{familyId}/ingredients/{ingredientFridgeQuantityId}", FAMILY_ID,INGREDIENT_FRIDGE_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .delete("/fridge/ingredients/{ingredientFridgeQuantityId}", ingredientFridgeId)
                 .then()
                 .statusCode(204);
     }
@@ -122,18 +140,20 @@ class FridgeResourceTest {
     @Order(10)
     void testGetIngredientFromFamilyFridge() {
         given().when()
-                .get("/fridge/{familyId}/ingredients/search/{ingredientFridgeQuantityId}", FAMILY_ID, INGREDIENT_FRIDGE_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .get("/fridge/ingredients/search/{ingredientFridgeQuantityId}", ingredientFridgeId)
                 .then()
                 .statusCode(200)
                 .log().body()
-                .body("ingredientFridgeQuantityId", is(INGREDIENT_FRIDGE_ID));
+                .body("ingredientFridgeQuantityId", is(ingredientFridgeId));
     }
 
     @Test
     @Order(3)
     void testSearchIngredientByName() {
         given().when()
-                .get("/fridge/{familyId}/ingredients/Tomate", FAMILY_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .get("/fridge/ingredients/Tomate")
                 .then()
                 .statusCode(200)
                 .body("[0].ingredient.name", is("Tomate"));
@@ -143,7 +163,8 @@ class FridgeResourceTest {
     @Order(4)
     void testGetIngredientsGroupedByCategory() {
         given().when()
-                .get("/fridge/{familyId}/categories", FAMILY_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .get("/fridge/categories")
                 .then()
                 .statusCode(200)
                 .body(is(not(empty())));
@@ -153,7 +174,8 @@ class FridgeResourceTest {
     @Order(5)
     void testGetUtensilsFromFamilyFridge() {
         given().when()
-                .get("/fridge/{familyId}/utensils", FAMILY_ID)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .get("/fridge/utensils")
                 .then()
                 .statusCode(200)
                 .body(is(not(empty())));
@@ -164,9 +186,10 @@ class FridgeResourceTest {
     void testAddUtensilToFamily() {
 
         given().when()
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
                 .contentType("application/json")
                 .body("{\"name\": \"Knife\"}")
-                .post("/fridge/{familyId}/utensils", FAMILY_ID)
+                .post("/fridge/utensils")
                 .then()
                 .statusCode(201)
                 .log().body();
@@ -176,7 +199,8 @@ class FridgeResourceTest {
     @Order(12)
     void testRemoveUtensilToFamily() {
         given().when()
-                .delete("/fridge/{familyId}/utensils/{utensilId}", FAMILY_ID, 1)
+                .header("Authorization", "Bearer " + customJwtPair.accessToken())
+                .delete("/fridge/utensils/{utensilId}", 1)
                 .then()
                 .statusCode(204);
     }
