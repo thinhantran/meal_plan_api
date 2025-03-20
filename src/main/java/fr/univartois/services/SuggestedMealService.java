@@ -46,9 +46,7 @@ public class SuggestedMealService {
   }
 
   public List<SuggestedMeal> getSuggestedMeals(JsonWebToken jwt) {
-    try {
-      User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
-    } ca
+    User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
     Family family = Objects.requireNonNull(familyRepository.findByUser(user));
     return suggestedMealRepository.list("associatedFamily = ?1", Sort.ascending("date"), family);
   }

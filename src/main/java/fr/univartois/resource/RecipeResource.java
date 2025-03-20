@@ -54,9 +54,16 @@ public class RecipeResource {
     return recipeService.searchRecipesByName(name);
   }
 
+  @Path("/byId")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  public Recipe getById(@QueryParam("id") Long id) {
+    return recipeService.getRecipeById(id);
+  }
+
   @Path("/all")
   @GET
-  public List<Recipe> getAllIngredients(@QueryParam("offset") int offset, @QueryParam("limit") int limit) {
+  public List<Recipe> getAllRecipes(@QueryParam("offset") int offset, @QueryParam("limit") int limit) {
     return recipeService.getRecipes(offset, limit);
   }
 

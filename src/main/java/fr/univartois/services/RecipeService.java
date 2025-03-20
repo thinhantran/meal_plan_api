@@ -53,4 +53,8 @@ public class RecipeService {
   public Recipe getRecipeByName(String name) {
     return recipeRepository.find("lower(name)", name.toLowerCase()).firstResult();
   }
+
+  public Recipe getRecipeById(Long id) {
+    return recipeRepository.findById(id);
+  }
 }
