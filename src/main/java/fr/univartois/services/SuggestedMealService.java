@@ -46,15 +46,17 @@ public class SuggestedMealService {
   }
 
   public List<SuggestedMeal> getSuggestedMeals(JsonWebToken jwt) {
-    User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
+    try {
+      User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
+    } ca
     Family family = Objects.requireNonNull(familyRepository.findByUser(user));
-    return suggestedMealRepository.list("family = ?1", Sort.ascending("date"), family);
+    return suggestedMealRepository.list("associatedFamily = ?1", Sort.ascending("date"), family);
   }
 
   public List<SuggestedMeal> getSuggestedMealsStartingToday(JsonWebToken jwt) {
     User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
     Family family = Objects.requireNonNull(familyRepository.findByUser(user));
-    return suggestedMealRepository.list("family = ?1 AND date >= current_date()", Sort.ascending("date"), family);
+    return suggestedMealRepository.list("associatedFamily = ?1 AND date >= current_date()", Sort.ascending("date"), family);
   }
 
   @Transactional
