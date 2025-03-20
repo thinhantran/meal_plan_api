@@ -1,9 +1,7 @@
 package fr.univartois.resource;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
@@ -14,7 +12,6 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
-import fr.univartois.model.IngredientCategory;
 import fr.univartois.model.IngredientFridgeQuantity;
 import fr.univartois.model.IngredientFridgeQuantityInput;
 import fr.univartois.model.IngredientRemove;
@@ -146,7 +143,7 @@ public class FridgeResource {
     System.out.println("Entering searchIngredientByName with name = " + name);
     List<IngredientFridgeQuantity> ingredients = fridgeService.searchIngredientByName(jwt, name);
     if (ingredients.isEmpty()) {
-      return Response.status(Response.Status.NOT_FOUND).entity("Ingredient not found fd,gdfgt,dt").build();
+      return Response.status(Response.Status.NOT_FOUND).entity("Ingredient not found").build();
     }
     return Response.ok(ingredients).build();
   }

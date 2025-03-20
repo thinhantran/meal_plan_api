@@ -12,7 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 import fr.univartois.model.DietaryRestriction;
 import fr.univartois.model.Family;
 import fr.univartois.model.User;
-import fr.univartois.service.UserService;
+import fr.univartois.services.UserService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;

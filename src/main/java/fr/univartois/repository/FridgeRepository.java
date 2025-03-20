@@ -3,7 +3,11 @@ package fr.univartois.repository;
 import java.util.List;
 import java.util.Optional;
 
-import fr.univartois.model.*;
+import fr.univartois.model.Family;
+import fr.univartois.model.Fridge;
+import fr.univartois.model.Ingredient;
+import fr.univartois.model.IngredientFridgeQuantity;
+import fr.univartois.model.Utensil;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;

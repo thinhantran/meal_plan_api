@@ -14,7 +14,7 @@ import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import fr.univartois.repository.MemberRoleRepository;
 import fr.univartois.repository.UserRepository;
-import fr.univartois.service.FamilyService;
+import fr.univartois.services.FamilyService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

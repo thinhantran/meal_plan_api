@@ -1,4 +1,4 @@
-package fr.univartois.service;
+package fr.univartois.services;
 
 import java.util.List;
 

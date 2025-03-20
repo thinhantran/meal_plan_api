@@ -1,6 +1,7 @@
 package fr.univartois.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,7 +27,7 @@ public class MemberRole {
 
   @OneToOne
   @JoinColumn(name = "user_id", referencedColumnName = "userId")
-  @JsonManagedReference("user")
+  @JsonIgnore
   private User user;
 
   @ManyToOne

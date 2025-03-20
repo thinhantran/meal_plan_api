@@ -12,8 +12,8 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
 import fr.univartois.model.PlannedMeal;
 import fr.univartois.model.SuggestedMeal;
-import fr.univartois.repository.MealRepository;
 import fr.univartois.services.MealService;
+import fr.univartois.services.SuggestedMealService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -27,6 +27,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/meals")
 @SecuritySchemes(value = {
@@ -49,53 +50,54 @@ public class MealResource {
 
   @Inject
   MealService mealService;
+
   @Inject
-  MealRepository mealRepository;
+  SuggestedMealService suggestedMealService;
 
   @Path("/suggestions")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public List<SuggestedMeal> getSuggestions() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return suggestedMealService.getSuggestedMeals(jwt);
   }
 
-  @Path("/suggestions/{recipeId}")
+  @Path("/suggestions")
   @POST
-  public SuggestedMeal suggestMeal(@PathParam("recipeId") int recipeId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Response suggestMeal(@FormParam("recipeName") String recipeName, @FormParam("date") LocalDate date, @FormParam("isLunch") boolean isLunch) {
+    return suggestedMealService.suggestMeal(jwt, recipeName, date, isLunch);
   }
 
   @Path("/suggestions/{suggestedMealId}/votes")
   @GET
-  public int getVotesCount(@PathParam("suggestedMealId") int suggestedMealId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Response getVotesCount(@PathParam("suggestedMealId") int suggestedMealId) {
+    return suggestedMealService.getVoteCount(jwt, suggestedMealId);
   }
 
   @Path("/suggestions/{suggestedMealId}/votes/{username}")
   @GET
-  public boolean hasVoteOnSuggestion(@PathParam("suggestedMealId") int suggestedMealId,
+  public Response hasVoteOnSuggestion(@PathParam("suggestedMealId") int suggestedMealId,
       @PathParam("username") String username) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return suggestedMealService.hasVoteOnSuggestion(jwt, suggestedMealId, username);
   }
 
   @Path("/suggestions/{suggestedMealId}/votes/{username}")
   @POST
-  public void voteOnSuggestion(@PathParam("suggestedMealId") int suggestedMealId,
+  public Response voteOnSuggestion(@PathParam("suggestedMealId") int suggestedMealId,
       @PathParam("username") String username) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return suggestedMealService.voteOnSuggestion(jwt, suggestedMealId);
   }
 
   @Path("/suggestions/{suggestedMealId}/votes/{username}")
   @DELETE
-  public void unvoteOnSuggestion(@PathParam("suggestedMealId") int suggestedMealId,
+  public Response unvoteOnSuggestion(@PathParam("suggestedMealId") int suggestedMealId,
       @PathParam("username") String username) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return suggestedMealService.unvoteOnSuggestion(jwt, suggestedMealId);
   }
 
   @Path("/plans/suggestions/{suggestedMealId}")
   @POST
-  public PlannedMeal planMealFromSuggestion(@PathParam("suggestedMealId") int suggestedMealId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Response planMealFromSuggestion(@PathParam("suggestedMealId") int suggestedMealId) {
+    return suggestedMealService.planMealFromSuggestion(jwt, suggestedMealId);
   }
 
   @Path("/plans/{plannedMealId}")

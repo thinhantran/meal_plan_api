@@ -1,5 +1,6 @@
 package fr.univartois.fixtures;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -27,9 +28,11 @@ public class IngredientFixture extends Fixture {
     this.ingredientRepository = ingredientRepository;
   }
 
+  @Transactional
   @Override
   public void generateRealData() {
-
+    Ingredient tomato = new Ingredient(1L, "Tomate", new ArrayList<>());
+    ingredientRepository.persist(tomato);
   }
 
   @Override

@@ -1,10 +1,8 @@
 package fr.univartois.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.univartois.dtos.RecipePerIngredient;
-import fr.univartois.model.Ingredient;
 import fr.univartois.model.IngredientCategory;
 import fr.univartois.model.Recipe;
 import fr.univartois.repository.IngredientRecipeQuantityRepository;
@@ -50,5 +48,9 @@ public class RecipeService {
         .page(offset, limit)
         .project(RecipePerIngredient.class)
         .list();
+  }
+
+  public Recipe getRecipeByName(String name) {
+    return recipeRepository.find("lower(name)", name.toLowerCase()).firstResult();
   }
 }

@@ -12,7 +12,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -21,6 +23,8 @@ import lombok.Setter;
 @Table(uniqueConstraints = {
     @UniqueConstraint (columnNames = {"date", "isLunchOrDinnerOtherwise"})
 })
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlannedMeal {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +38,6 @@ public class PlannedMeal {
   private Recipe associatedRecipe;
 
   @ManyToOne
-  @Transient
   private Family associatedFamily;
 
   @Transient
@@ -42,4 +45,10 @@ public class PlannedMeal {
 
   @Transient
   private Map<User, Integer> expectedPeopleForLeftovers;
+
+  public PlannedMeal(SuggestedMeal suggestedMeal) {
+    this(null, suggestedMeal.getDate(), suggestedMeal.isLunchOrDinnerOtherwise(),
+        suggestedMeal.getAssociatedRecipe(), suggestedMeal.getAssociatedFamily(),
+        suggestedMeal.getExpectedPeople(), suggestedMeal.getExpectedPeopleForLeftovers());
+  }
 }

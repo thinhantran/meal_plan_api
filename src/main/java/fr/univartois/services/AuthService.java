@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import fr.univartois.repository.UserRepository;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import fr.univartois.dtos.CustomJwtAccess;
@@ -15,6 +14,7 @@ import fr.univartois.model.TokenAuth;
 import fr.univartois.model.User;
 import fr.univartois.repository.PasswordAuthRepository;
 import fr.univartois.repository.TokenAuthRepository;
+import fr.univartois.repository.UserRepository;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
