@@ -2,26 +2,31 @@ package fr.univartois.services;
 
 import java.util.List;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
 import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import fr.univartois.repository.FamilyRepository;
 import fr.univartois.repository.MemberRoleRepository;
+import fr.univartois.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class FamilyService {
 
-    @Inject
     FamilyRepository familyRepository;
 
-//    @Inject
-//    FamilyInvitationRepository familyInvitationRepository;
-
-    @Inject
     MemberRoleRepository memberRoleRepository;
+
+    UserRepository userRepository;
+
+    public FamilyService(FamilyRepository familyRepository, MemberRoleRepository memberRoleRepository, UserRepository userRepository) {
+        this.familyRepository = familyRepository;
+        this.memberRoleRepository = memberRoleRepository;
+        this.userRepository = userRepository;
+    }
 
     public Response createFamily(User user, String name) {
         Family family = new Family();
@@ -31,9 +36,9 @@ public class FamilyService {
         memberRole.setCategory(MemberRole.Role.MANAGER);
         family.addMember(memberRole);
         family.setName(name);
-        user.setMemberRole(memberRole);
         memberRoleRepository.persist(memberRole);
         familyRepository.persist(family);
+        user.setMemberRole(memberRole);
         return Response.status(Response.Status.CREATED).entity(family).build();
     }
 
@@ -41,31 +46,19 @@ public class FamilyService {
         return memberRoleRepository.findAllByFamily(id);
     }
 
-    public Family get(long id) {
-        return familyRepository.findById(id);
+    public Response get(JsonWebToken jsonWebToken) {
+        User user = userRepository.findByUsername(jsonWebToken.getSubject());
+        if(user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.status(Response.Status.OK).entity(user.getMemberRole().getFamily()).build();
     }
-
-//    public Response createInvitation(long id, User user) {
-//        FamilyInvitation invitation = new FamilyInvitation();
-//        invitation.setUser(user);
-//        invitation.setFamily(familyRepository.findById(id));
-//        familyInvitationRepository.persist(invitation);
-//        return Response.status(Response.Status.CREATED).entity(invitation).build();
-//    }
-//
-//    public List<User> getInvitations(long id) {
-//        return familyInvitationRepository.findAllByFamily(id);
-//    }
 
     public Response joinFamily(String code, User user) {
         Family family = familyRepository.findFamilyByCode(code);
         if(memberRoleRepository.findByUserAndFamily(family.getId(), user.getUserId()) != null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("L'utilisateur fait déjà parti du groupe").build();
         }
-//        FamilyInvitation invitation = familyInvitationRepository.findInvitation(user.getUserId(), family.getId());
-//        if(invitation != null) {
-//            familyInvitationRepository.delete(invitation);
-//        }
         MemberRole memberRole = new MemberRole(null, user, family, MemberRole.Role.MEMBER);
         memberRoleRepository.persist(memberRole);
         return Response.status(Response.Status.OK).build();

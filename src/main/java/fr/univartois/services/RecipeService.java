@@ -12,19 +12,22 @@ import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class RecipeService {
 
-  @Inject
   RecipeRepository recipeRepository;
 
-  @Inject
   IngredientRepository ingredientRepository;
 
-  @Inject
   IngredientRecipeQuantityRepository ingredientRecipeQuantityRepository;
+
+  public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository,
+      IngredientRecipeQuantityRepository ingredientRecipeQuantityRepository) {
+    this.recipeRepository = recipeRepository;
+    this.ingredientRepository = ingredientRepository;
+    this.ingredientRecipeQuantityRepository = ingredientRecipeQuantityRepository;
+  }
 
   public Recipe getRecipe(Long id) {
     return recipeRepository.findById(id);

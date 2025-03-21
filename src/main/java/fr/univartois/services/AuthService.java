@@ -81,7 +81,7 @@ public class AuthService {
     return new CustomJwtAccess(Jwt.issuer("http://localhost:8080")
         .subject(user.getUsername())
         .groups("access")
-        .expiresAt(Instant.now().plus(20, ChronoUnit.MINUTES))
+        .expiresAt(Instant.now().plus(1, ChronoUnit.MINUTES))
         .sign());
   }
 

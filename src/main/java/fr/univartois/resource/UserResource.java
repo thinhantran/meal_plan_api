@@ -14,7 +14,6 @@ import fr.univartois.model.Family;
 import fr.univartois.model.User;
 import fr.univartois.services.UserService;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
@@ -42,24 +41,29 @@ import jakarta.ws.rs.core.MediaType;
 @SecurityRequirement(name = "AccessBearerAuthentication")
 public class UserResource {
 
-  @Inject
+  private static final String NOT_SUPPORTED_YET = "Not supported yet.";
+
   UserService userService;
 
-  @Inject
   JsonWebToken jwt;
+
+  public UserResource(UserService userService, JsonWebToken jwt) {
+    this.userService = userService;
+    this.jwt = jwt;
+  }
 
   @Path("/restrictions")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public List<DietaryRestriction> getRestrictions() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    throw new UnsupportedOperationException(NOT_SUPPORTED_YET);
   }
 
   @Path("/restrictions")
   @PUT
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public List<DietaryRestriction> putRestrictions(@QueryParam("terms") List<String> terms) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    throw new UnsupportedOperationException(NOT_SUPPORTED_YET);
   }
 
   @Path("/families/")
@@ -77,13 +81,13 @@ public class UserResource {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   public Family assignUserToFamily(@PathParam("familyId") String familyId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    throw new UnsupportedOperationException(NOT_SUPPORTED_YET);
   }
 
   @Path("/families/{familyId}")
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   public Family reassignUserToFamily(@PathParam("familyId") String familyId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    throw new UnsupportedOperationException(NOT_SUPPORTED_YET);
   }
 }

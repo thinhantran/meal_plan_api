@@ -5,25 +5,30 @@ import fr.univartois.repository.PasswordAuthRepository;
 import fr.univartois.repository.UserRepository;
 import fr.univartois.services.AuthService;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class PasswordAuthFixture extends Fixture {
 
-    @Inject
+    private static final String ADMIN_PASSWORD = "admin";
+
     AuthService authService;
 
-    @Inject
     UserRepository userRepository;
 
-    @Inject
     PasswordAuthRepository passwordAuthRepository;
+
+    public PasswordAuthFixture(AuthService authService, UserRepository userRepository,
+        PasswordAuthRepository passwordAuthRepository) {
+        this.authService = authService;
+        this.userRepository = userRepository;
+        this.passwordAuthRepository = passwordAuthRepository;
+    }
 
     @Override
     @Transactional
     public void generateRealData() {
-        String[] passwords = new String[]{"admin", "admin", "admin"};
+        String[] passwords = new String[]{ADMIN_PASSWORD, ADMIN_PASSWORD, ADMIN_PASSWORD};
         for (int i = 1; i <= passwords.length; i++) {
             String password = passwords[i - 1];
             byte[] salt = authService.generateSalt();
@@ -39,6 +44,6 @@ public class PasswordAuthFixture extends Fixture {
     @Override
     @Transactional
     public void generateSingleFakeData() {
-
+        // UNUSED
     }
 }

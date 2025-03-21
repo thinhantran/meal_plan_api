@@ -41,7 +41,7 @@ class FridgeResourceTest {
         .statusCode(200)
         .extract().as(CustomJwtPair.class);
 
-    Family createdFamily = given().when()
+    given().when()
         .header("Authorization", "Bearer " + customJwtPair.accessToken())
         .post("/families")
         .then()
@@ -139,7 +139,6 @@ class FridgeResourceTest {
         .get("/fridge/ingredients/search/{ingredientFridgeQuantityId}", ingredientFridgeId)
         .then()
         .statusCode(200)
-        .log().body()
         .body("ingredientFridgeQuantityId", is(ingredientFridgeId));
   }
 
@@ -175,8 +174,7 @@ class FridgeResourceTest {
         .body("{\"name\": \"Knife\"}")
         .post("/fridge/utensils")
         .then()
-        .statusCode(201)
-        .log().body();
+        .statusCode(201);
   }
 
   @Test

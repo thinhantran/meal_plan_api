@@ -7,17 +7,19 @@ import fr.univartois.model.PlannedMeal;
 import fr.univartois.model.Recipe;
 import fr.univartois.repository.MealRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class MealService {
 
-  @Inject
   MealRepository mealRepository;
 
-  @Inject
   RecipeService recipeService;
+
+  public MealService(MealRepository mealRepository, RecipeService recipeService) {
+    this.mealRepository = mealRepository;
+    this.recipeService = recipeService;
+  }
 
   public List<PlannedMeal> listAll() {
     return mealRepository.findAll().list();
@@ -36,7 +38,7 @@ public class MealService {
   }
 
   @Transactional
-  public PlannedMeal planMealFromRecipe(Long recipeId, LocalDate date, boolean isLunch) {
+  public PlannedMeal planMealFromRecipe(Long recipeId, LocalDate date, boolean isLunch, int participants) {
     Recipe recipe = recipeService.getRecipe(recipeId);
     if (recipe == null) {
       throw new IllegalArgumentException("Recipe not found");
@@ -45,6 +47,7 @@ public class MealService {
     meal.setDate(date);
     meal.setLunchOrDinnerOtherwise(isLunch);
     meal.setAssociatedRecipe(recipe);
+    meal.setNumberOfParticipants(participants);
     mealRepository.persist(meal);
     return meal;
   }

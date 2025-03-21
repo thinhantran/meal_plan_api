@@ -58,7 +58,7 @@ public class SuggestedMealService {
   }
 
   @Transactional
-  public Response suggestMeal(JsonWebToken jwt, String recipeName, LocalDate date, boolean isLunch) {
+  public Response suggestMeal(JsonWebToken jwt, String recipeName, LocalDate date, boolean isLunch, int participants) {
     User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
     Response response = checksToSuggestMeal(user);
     if (response != null) return response;
@@ -68,6 +68,7 @@ public class SuggestedMealService {
     suggestedMeal.setAssociatedFamily(user.getMemberRole().getFamily());
     suggestedMeal.setDate(date);
     suggestedMeal.setLunchOrDinnerOtherwise(isLunch);
+    suggestedMeal.setNumberOfParticipants(participants);
     suggestedMealRepository.persist(suggestedMeal);
     return Response.status(Response.Status.CREATED).entity(suggestedMeal).build();
   }

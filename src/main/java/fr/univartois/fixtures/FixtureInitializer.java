@@ -5,7 +5,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class FixtureInitializer {
@@ -16,20 +15,24 @@ public class FixtureInitializer {
     @ConfigProperty(name = "quarkus.fixtures.fake.enabled", defaultValue = "false")
     boolean fakeFixturesEnabled;
 
-    @Inject
     UserFixture userFixture;
 
-    @Inject
     PasswordAuthFixture passwordAuthFixture;
 
-    @Inject
     IngredientFixture ingredientFixture;
 
-    @Inject
     RecipeFixture recipeFixture;
 
-    @Inject
     MealFixture mealFixture;
+
+    public FixtureInitializer(UserFixture userFixture, PasswordAuthFixture passwordAuthFixture,
+        IngredientFixture ingredientFixture, RecipeFixture recipeFixture, MealFixture mealFixture) {
+        this.userFixture = userFixture;
+        this.passwordAuthFixture = passwordAuthFixture;
+        this.ingredientFixture = ingredientFixture;
+        this.recipeFixture = recipeFixture;
+        this.mealFixture = mealFixture;
+    }
 
     public void generateFixtures(@Observes StartupEvent ev) {
         if (realFixturesEnabled) {

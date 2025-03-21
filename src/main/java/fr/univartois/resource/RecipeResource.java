@@ -13,7 +13,6 @@ import fr.univartois.model.IngredientCategory;
 import fr.univartois.model.Recipe;
 import fr.univartois.services.RecipeService;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -36,17 +35,11 @@ import jakarta.ws.rs.core.MediaType;
 @SecurityRequirement(name = "AccessBearerAuthentication")
 public class RecipeResource {
 
-  @Inject
   RecipeService recipeService;
 
-  /*
-  @GET
-  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-  @Produces(MediaType.APPLICATION_JSON)
-  public List<Recipe> search(@QueryParam("terms") List<String> terms) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public RecipeResource(RecipeService recipeService) {
+    this.recipeService = recipeService;
   }
-  */
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)

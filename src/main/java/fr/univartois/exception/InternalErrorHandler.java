@@ -7,14 +7,13 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 @Provider
-public class EverythingHandler implements ExceptionMapper<Exception> {
+public class InternalErrorHandler implements ExceptionMapper<Exception> {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Override
     public Response toResponse(Exception e) {
-        System.err.println(e.getMessage());
-        e.printStackTrace();
+        logger.error(e.getMessage(), e);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
 }

@@ -16,7 +16,6 @@ import fr.univartois.repository.MemberRoleRepository;
 import fr.univartois.repository.UserRepository;
 import fr.univartois.services.FamilyService;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.ForbiddenException;
@@ -47,26 +46,25 @@ import jakarta.ws.rs.core.Response;
 @SecurityRequirement(name = "AccessBearerAuthentication")
 public class FamilyResource {
 
-  @Inject
   FamilyService familyService;
 
-  @Inject
   UserRepository userRepository;
 
-  @Inject
   JsonWebToken jwt;
 
-  @Inject
   MemberRoleRepository memberRoleRepository;
 
-  @Path("/{familyId}")
+  public FamilyResource(FamilyService familyService, UserRepository userRepository, JsonWebToken jwt,
+      MemberRoleRepository memberRoleRepository) {
+    this.familyService = familyService;
+    this.userRepository = userRepository;
+    this.jwt = jwt;
+    this.memberRoleRepository = memberRoleRepository;
+  }
+
   @GET
-  public Family getFamilyDetail(@PathParam("familyId") int familyId) {
-    User user = userRepository.findByUsername(jwt.getSubject());
-    if(memberRoleRepository.findByUserAndFamily(familyId, user.getUserId()) == null) {
-      throw new ForbiddenException();
-    }
-    return familyService.get(familyId);
+  public Response getFamilyDetail() {
+    return familyService.get(jwt);
   }
 
   @Path("/{familyId}/members")
@@ -78,19 +76,6 @@ public class FamilyResource {
     }
     return familyService.findMembers(familyId);
   }
-
-//  @Path("/{familyId}/invitations")
-//  @Transactional
-//  @POST
-//  public Response createInvitation(@PathParam("familyId") long familyId, User user) {
-//    return familyService.createInvitation(familyId, user);
-//  }
-//
-//  @Path("/{familyId}/invitations")
-//  @GET
-//  public List<User> getInvitations(@PathParam("familyId") long familyId) {
-//    return familyService.getInvitations(familyId);
-//  }
 
   @Path("/{familyCode}")
   @Transactional

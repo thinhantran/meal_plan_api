@@ -49,6 +49,6 @@ public class IngredientFixture extends Fixture {
 
   @Override
   public void generateSingleFakeData() {
-
+    // UNUSED
   }
 }

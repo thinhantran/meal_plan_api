@@ -19,7 +19,6 @@ import fr.univartois.model.Utensil;
 import fr.univartois.model.UtensilInput;
 import fr.univartois.services.FridgeService;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -50,11 +49,14 @@ import jakarta.ws.rs.core.Response;
 @SecurityRequirement(name = "AccessBearerAuthentication")
 public class FridgeResource {
 
-  @Inject
   FridgeService fridgeService;
 
-  @Inject
   JsonWebToken jwt;
+
+  public FridgeResource(FridgeService fridgeService, JsonWebToken jwt) {
+    this.fridgeService = fridgeService;
+    this.jwt = jwt;
+  }
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
@@ -126,7 +128,6 @@ public class FridgeResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getIngredientFromFamilyFridge(@PathParam("ingredientFridgeQuantityId") int ingredientFridgeQuantityId) {
     IngredientFridgeQuantity ingredient = fridgeService.getIngredientFridgeQuantity(jwt, ingredientFridgeQuantityId);
-    System.out.println("Ingredient :" +ingredient);
     if (ingredient != null) {
       return Response.ok(ingredient).build();
     } else {
@@ -140,7 +141,6 @@ public class FridgeResource {
   @Path("/ingredients/{name}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response searchIngredientByName(@PathParam("name") String name) {
-    System.out.println("Entering searchIngredientByName with name = " + name);
     List<IngredientFridgeQuantity> ingredients = fridgeService.searchIngredientByName(jwt, name);
     if (ingredients.isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND).entity("Ingredient not found").build();

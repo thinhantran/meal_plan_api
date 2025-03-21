@@ -15,7 +15,6 @@ import fr.univartois.model.SuggestedMeal;
 import fr.univartois.services.MealService;
 import fr.univartois.services.SuggestedMealService;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.FormParam;
@@ -37,7 +36,8 @@ import jakarta.ws.rs.core.Response;
         securitySchemeName = "AccessBearerAuthentication",
         apiKeyName = "Authroization",
         type = SecuritySchemeType.HTTP,
-        description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
+        description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer " +
+            "xxx\")",
         in = SecuritySchemeIn.HEADER
     )
 })
@@ -45,14 +45,17 @@ import jakarta.ws.rs.core.Response;
 @SecurityRequirement(name = "AccessBearerAuthentication")
 public class MealResource {
 
-  @Inject
   JsonWebToken jwt;
 
-  @Inject
   MealService mealService;
 
-  @Inject
   SuggestedMealService suggestedMealService;
+
+  public MealResource(JsonWebToken jwt, MealService mealService, SuggestedMealService suggestedMealService) {
+    this.jwt = jwt;
+    this.mealService = mealService;
+    this.suggestedMealService = suggestedMealService;
+  }
 
   @Path("/suggestions")
   @GET
@@ -63,8 +66,9 @@ public class MealResource {
 
   @Path("/suggestions")
   @POST
-  public Response suggestMeal(@FormParam("recipeName") String recipeName, @FormParam("date") LocalDate date, @FormParam("isLunch") boolean isLunch) {
-    return suggestedMealService.suggestMeal(jwt, recipeName, date, isLunch);
+  public Response suggestMeal(@FormParam("recipeName") String recipeName, @FormParam("date") LocalDate date,
+      @FormParam("isLunch") boolean isLunch, @FormParam("participants") int participants) {
+    return suggestedMealService.suggestMeal(jwt, recipeName, date, isLunch, participants);
   }
 
   @Path("/suggestions/{suggestedMealId}/votes")
@@ -116,8 +120,8 @@ public class MealResource {
   @POST
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public PlannedMeal planMealFromRecipe(@FormParam("recipeId") long recipeId, @FormParam("date") LocalDate date,
-      @FormParam("isLunch") boolean isLunch) {
-    return mealService.planMealFromRecipe(recipeId, date, isLunch);
+      @FormParam("isLunch") boolean isLunch, @FormParam("participants") int participants) {
+    return mealService.planMealFromRecipe(recipeId, date, isLunch, participants);
   }
 
   @Path("/plans")
@@ -134,7 +138,7 @@ public class MealResource {
 
   @GET
   @Path("/weekly")
-  public List<PlannedMeal> getMeals(LocalDate firstDayOfWeek) {
+  public List<PlannedMeal> getMeals(@QueryParam("firstDayOfWeek") LocalDate firstDayOfWeek) {
     return mealService.listAll(firstDayOfWeek);
   }
 }

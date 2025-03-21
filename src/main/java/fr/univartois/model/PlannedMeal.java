@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +22,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(uniqueConstraints = {
-    @UniqueConstraint (columnNames = {"date", "isLunchOrDinnerOtherwise"})
+    @UniqueConstraint(columnNames = { "date", "isLunchOrDinnerOtherwise" })
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +35,9 @@ public class PlannedMeal {
 
   private boolean isLunchOrDinnerOtherwise;
 
-  @ManyToOne
+  private int numberOfParticipants;
+
+  @ManyToOne(cascade = CascadeType.PERSIST)
   private Recipe associatedRecipe;
 
   @ManyToOne
@@ -48,7 +51,8 @@ public class PlannedMeal {
 
   public PlannedMeal(SuggestedMeal suggestedMeal) {
     this(null, suggestedMeal.getDate(), suggestedMeal.isLunchOrDinnerOtherwise(),
-        suggestedMeal.getAssociatedRecipe(), suggestedMeal.getAssociatedFamily(),
-        suggestedMeal.getExpectedPeople(), suggestedMeal.getExpectedPeopleForLeftovers());
+        suggestedMeal.getNumberOfParticipants(), suggestedMeal.getAssociatedRecipe(),
+        suggestedMeal.getAssociatedFamily(), suggestedMeal.getExpectedPeople(),
+        suggestedMeal.getExpectedPeopleForLeftovers());
   }
 }

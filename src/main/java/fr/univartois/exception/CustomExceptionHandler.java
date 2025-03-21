@@ -1,4 +1,4 @@
-package fr.univartois;
+package fr.univartois.exception;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;

@@ -5,14 +5,16 @@ import java.util.Arrays;
 import fr.univartois.model.User;
 import fr.univartois.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class UserFixture extends Fixture {
 
-    @Inject
     UserRepository userRepository;
+
+    public UserFixture(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     @Override
@@ -28,6 +30,6 @@ public class UserFixture extends Fixture {
     @Transactional
     @Override
     public void generateSingleFakeData() {
-
+        // UNUSED
     }
 }

@@ -74,9 +74,7 @@ public class RecipesDTO {
           strIngredient11, strIngredient12, strIngredient13, strIngredient14, strIngredient15,
           strIngredient16, strIngredient17, strIngredient18, strIngredient19, strIngredient20
       };
-      Map<String, String> map = getStringStringMap(ingredients);
-
-      return map;
+      return getStringStringMap(ingredients);
     }
 
     private Map<String, String> getStringStringMap(String[] ingredients) {

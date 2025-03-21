@@ -27,7 +27,9 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Family {
 
-  static private final int LENGTHCODE = 6;
+  private static final int LENGTHCODE = 6;
+
+  private static final Random random = new Random();
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +56,6 @@ public class Family {
   @PrePersist
   private void generateCode() {
     String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    Random random = new Random();
     StringBuilder value = new StringBuilder();
     for (int i = 0; i < LENGTHCODE; i++) {
       int index = random.nextInt(characters.length());

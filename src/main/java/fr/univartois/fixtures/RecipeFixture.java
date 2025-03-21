@@ -19,7 +19,7 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class RecipeFixture extends Fixture {
 
-  public static final char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+  protected static final char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
   TheMealDBApi theMealDBApi;
 
@@ -35,12 +35,12 @@ public class RecipeFixture extends Fixture {
 
   @Override
   public void generateRealData() {
-
+    // UNUSED
   }
 
   @Override
   public void generateSingleFakeData() {
-
+    // UNUSED
   }
 
   @Transactional

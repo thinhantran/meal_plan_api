@@ -24,29 +24,34 @@ import fr.univartois.repository.IngredientFridgeQuantityRepository;
 import fr.univartois.repository.IngredientRepository;
 import fr.univartois.repository.UtensilRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class FridgeService {
 
-  @Inject
+  public static final String INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID = "Ingredient not found in fridge for ID: ";
   FridgeRepository fridgeRepository;
 
-  @Inject
   FamilyRepository familyRepository;
 
-  @Inject
   IngredientRepository ingredientRepository;
 
-  @Inject
   AuthService authService;
 
-  @Inject
   IngredientFridgeQuantityRepository ingredientFridgeQuantityRepository;
 
-  @Inject
   UtensilRepository utensilRepository;
+
+  public FridgeService(FridgeRepository fridgeRepository, FamilyRepository familyRepository,
+      IngredientRepository ingredientRepository, AuthService authService,
+      IngredientFridgeQuantityRepository ingredientFridgeQuantityRepository, UtensilRepository utensilRepository) {
+    this.fridgeRepository = fridgeRepository;
+    this.familyRepository = familyRepository;
+    this.ingredientRepository = ingredientRepository;
+    this.authService = authService;
+    this.ingredientFridgeQuantityRepository = ingredientFridgeQuantityRepository;
+    this.utensilRepository = utensilRepository;
+  }
 
   @Transactional
   public Fridge createFridge(JsonWebToken jwt) {
@@ -79,78 +84,6 @@ public class FridgeService {
     return ingredientFridgeQuantityRepository.findByFamily(family);
   }
 
-    /*
-    @Transactional
-    public IngredientFridgeQuantity addIngredient(JsonWebToken jsonWebToken, IngredientFridgeQuantityInput input) {
-        Optional<Fridge> fridgeOpt = fridgeRepository.findFridgeByFamilyId(familyId);
-        if (fridgeOpt.isEmpty()) {
-            throw new IllegalArgumentException("Fridge not found for family ID: " + familyId);
-        }
-        Optional<Ingredient> ingredientOpt = fridgeRepository.findIngredientByName(input.getIngredientName());
-        Ingredient ingredient;
-        if (ingredientOpt.isEmpty()) {
-            ingredient = new Ingredient();
-            ingredient.setName(input.getIngredientName());
-            ingredient.setCategory(input.getIngredientCategory());
-            fridgeRepository.saveIngredient(ingredient);
-        } else {
-            ingredient = ingredientOpt.get();
-        }
-        Optional<IngredientFridgeQuantity> existingQuantityOpt = fridgeRepository
-        .findIngredientFridgeQuantityByFridgeAndIngredient(fridgeOpt.get(), ingredient);
-        IngredientFridgeQuantity ingredientFridgeQuantity;
-
-        if (existingQuantityOpt.isPresent()) {
-            ingredientFridgeQuantity = existingQuantityOpt.get();
-            if (!ingredientFridgeQuantity.getMeasurementUnit().equals(input.getMeasurementUnit())) {
-                double convertedQuantity = convertToSmallerUnit(input.getQuantity(), input.getMeasurementUnit(),
-                ingredientFridgeQuantity.getMeasurementUnit());
-                ingredientFridgeQuantity.setQuantity(ingredientFridgeQuantity.getQuantity() + convertedQuantity);
-                ingredientFridgeQuantity.setMeasurementUnit(ingredientFridgeQuantity.getMeasurementUnit());
-            } else {
-                ingredientFridgeQuantity.setQuantity(ingredientFridgeQuantity.getQuantity() + input.getQuantity());
-            }
-            if (ingredientFridgeQuantity.getDate().isAfter(input.getDate())) {
-                ingredientFridgeQuantity.setDate(input.getDate());
-            }
-        } else {
-            ingredientFridgeQuantity = new IngredientFridgeQuantity();
-            ingredientFridgeQuantity.setFridge(fridgeOpt.get());
-            ingredientFridgeQuantity.setIngredient(ingredient);
-            ingredientFridgeQuantity.setQuantity(input.getQuantity());
-            ingredientFridgeQuantity.setDate(input.getDate());
-            ingredientFridgeQuantity.setMeasurementUnit(input.getMeasurementUnit());
-        }
-
-        if (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.G
-                || ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.ML) {
-            double totalQuantity = Math.round(ingredientFridgeQuantity.getQuantity() * 10.0) / 10.0;
-            if (totalQuantity > 1000) {
-                IngredientUnit newUnit = (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.G)
-                        ? IngredientUnit.KG : IngredientUnit.L;
-                double convertedQuantity = convertToSmallerUnit(totalQuantity, ingredientFridgeQuantity
-                .getMeasurementUnit(), newUnit);
-                ingredientFridgeQuantity.setQuantity(convertedQuantity);
-                ingredientFridgeQuantity.setMeasurementUnit(newUnit);
-            }
-        }
-        if (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.KG
-                || ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.L) {
-            double totalQuantity = Math.round(ingredientFridgeQuantity.getQuantity() * 10.0) / 10.0;
-            if (totalQuantity < 1) {
-                IngredientUnit newUnit = (ingredientFridgeQuantity.getMeasurementUnit() == IngredientUnit.KG)
-                        ? IngredientUnit.G : IngredientUnit.ML;
-                double convertedQuantity = convertToSmallerUnit(totalQuantity, ingredientFridgeQuantity
-                .getMeasurementUnit(), newUnit);
-                ingredientFridgeQuantity.setQuantity(convertedQuantity);
-                ingredientFridgeQuantity.setMeasurementUnit(newUnit);
-            }
-        }
-
-        fridgeRepository.saveIngredientFridgeQuantity(ingredientFridgeQuantity);
-        return ingredientFridgeQuantity;
-    }*/
-
   @Transactional
   public IngredientFridgeQuantity addIngredient(JsonWebToken jsonWebToken, IngredientFridgeQuantityInput input) {
     IngredientFridgeQuantity ingredientFridgeQuantity = new IngredientFridgeQuantity();
@@ -171,7 +104,7 @@ public class FridgeService {
     IngredientFridgeQuantity ingredientFridgeQuantity = fridgeRepository.findIngredientFridgeQuantityById(
             ingredientFridgeQuantityId)
         .orElseThrow(
-            () -> new IllegalArgumentException("Ingredient not found in fridge for ID: " + ingredientFridgeQuantityId));
+            () -> new IllegalArgumentException(INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID + ingredientFridgeQuantityId));
 
     if (ingredientFridgeQuantity.getFridge().getFamily().getId() != family.getId()) {
       throw new IllegalArgumentException("Ingredient does not belong to the specified family fridge.");
@@ -221,7 +154,7 @@ public class FridgeService {
     Optional<IngredientFridgeQuantity> ingredientFridgeQuantityOpt = fridgeRepository.findIngredientFridgeQuantityById(
         ingredientFridgeQuantityId);
     if (ingredientFridgeQuantityOpt.isEmpty()) {
-      throw new IllegalArgumentException("Ingredient not found in fridge for ID: " + ingredientFridgeQuantityId);
+      throw new IllegalArgumentException(INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID + ingredientFridgeQuantityId);
     }
     IngredientFridgeQuantity ingredientFridgeQuantity = ingredientFridgeQuantityOpt.get();
     if (ingredientFridgeQuantity.getFridge().getFamily().getId() != family.getId()) {
@@ -250,12 +183,12 @@ public class FridgeService {
     Family family = authService.findUser(jsonWebToken.getSubject()).getMemberRole().getFamily();
     Fridge fridgeOpt = fridgeRepository.findFridgeByFamily(family);
     if (fridgeOpt == null) {
-      throw new IllegalArgumentException("Fridge not found for family ID: " + family.getId());
+      throw new IllegalArgumentException(INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID + family.getId());
     }
     Optional<IngredientFridgeQuantity> ingredientOpt = fridgeRepository.findIngredientFridgeQuantityById(
         ingredientFridgeQuantityId);
     if (ingredientOpt.isEmpty()) {
-      throw new IllegalArgumentException("Ingredient not found in fridge for ID: " + ingredientFridgeQuantityId);
+      throw new IllegalArgumentException(INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID + ingredientFridgeQuantityId);
     }
     return ingredientOpt.get();
   }
@@ -272,7 +205,7 @@ public class FridgeService {
     Family family = authService.findUser(jsonWebToken.getSubject()).getMemberRole().getFamily();
     Fridge optionalFridge = fridgeRepository.findFridgeByFamily(family);
     if (optionalFridge == null) {
-      throw new IllegalArgumentException("Fridge not found for family ID: ");
+      throw new IllegalArgumentException(INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID + family.getId());
     }
     return optionalFridge.getUstensils().stream()
         .anyMatch(utensil -> utensil.getUtensilId() == utensilId);
@@ -283,11 +216,10 @@ public class FridgeService {
     Family family = authService.findUser(jsonWebToken.getSubject()).getMemberRole().getFamily();
     Fridge fridgeOpt = fridgeRepository.findFridgeByFamily(family);
     if (fridgeOpt == null) {
-      throw new IllegalArgumentException("Fridge not found for family ID: ");
+      throw new IllegalArgumentException(INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID + family.getId());
     }
 
     Utensil utensilOpt = utensilRepository.findByNameAndFridge(utensilInput.getName(), fridgeOpt);
-    Utensil utensil;
 
     if (utensilOpt == null) {
       utensilOpt = new Utensil();
@@ -314,12 +246,7 @@ public class FridgeService {
 
   @Transactional
   public void removeUtensil(JsonWebToken jsonWebToken, int utensilId) {
-    Family family = authService.findUser(jsonWebToken.getSubject()).getMemberRole().getFamily();
-    Optional<Fridge> fridgeOpt = fridgeRepository.findFridgeByFamily(family.getId());
-    if (fridgeOpt.isEmpty()) {
-      throw new IllegalArgumentException("Fridge not found for family ID: " + family.getId());
-    }
-    Fridge fridge = fridgeOpt.get();
+    Fridge fridge = checkForEmptyFridge(jsonWebToken);
 
     Optional<Utensil> utensilOpt = fridgeRepository.findUtensilById(utensilId);
     if (utensilOpt.isEmpty()) {
@@ -332,13 +259,17 @@ public class FridgeService {
     fridgeRepository.flush();
   }
 
-  public List<Utensil> getUtensils(JsonWebToken jsonWebToken) {
+  private Fridge checkForEmptyFridge(JsonWebToken jsonWebToken) {
     Family family = authService.findUser(jsonWebToken.getSubject()).getMemberRole().getFamily();
     Optional<Fridge> fridgeOpt = fridgeRepository.findFridgeByFamily(family.getId());
     if (fridgeOpt.isEmpty()) {
-      throw new IllegalArgumentException("Fridge not found for family ID: ");
+      throw new IllegalArgumentException(INGREDIENT_NOT_FOUND_IN_FRIDGE_FOR_ID + family.getId());
     }
-    Fridge fridge = fridgeOpt.get();
+    return fridgeOpt.get();
+  }
+
+  public List<Utensil> getUtensils(JsonWebToken jsonWebToken) {
+    Fridge fridge = checkForEmptyFridge(jsonWebToken);
     return fridgeRepository.getUtensilsByFamilyId(fridge.getFridgeId());
   }
 

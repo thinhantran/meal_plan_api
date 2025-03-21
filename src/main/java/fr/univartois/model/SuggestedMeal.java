@@ -25,6 +25,8 @@ public class SuggestedMeal {
 
   private boolean isLunchOrDinnerOtherwise;
 
+  private int numberOfParticipants;
+
   @ManyToOne
   private Recipe associatedRecipe;
 
