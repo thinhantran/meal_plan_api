@@ -42,4 +42,8 @@ public class User {
   public int hashCode() {
     return Objects.hashCode(username);
   }
+
+  public void addRestriction(DietaryRestriction dietaryRestriction) {
+    dietaryRestrictions.add(dietaryRestriction);
+  }
 }

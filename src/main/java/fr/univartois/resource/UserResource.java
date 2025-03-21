@@ -45,14 +45,23 @@ public class UserResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public List<DietaryRestriction> getRestrictions() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    User user = userService.findByUsername(jwt.getSubject());
+    if(user == null) {
+      throw new NotFoundException("User not found");
+    }
+    return userService.getDietaryRestrictions(user);
   }
 
   @Path("/restrictions")
   @PUT
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Transactional
   public List<DietaryRestriction> putRestrictions(@QueryParam("terms") List<String> terms) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    User user = userService.findByUsername(jwt.getSubject());
+    if(user == null) {
+      throw new NotFoundException("User not found");
+    }
+    return userService.addDietaryRestriction(user, terms);
   }
 
   @Path("/families/")
