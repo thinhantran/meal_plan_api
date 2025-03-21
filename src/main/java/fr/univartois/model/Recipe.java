@@ -11,6 +11,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -29,6 +30,9 @@ public class Recipe {
   private String name;
 
   private String thumbnailUrl;
+
+  @Column(columnDefinition = "TEXT")
+  private String description;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe", fetch = FetchType.EAGER)
   @JsonManagedReference("recipe")

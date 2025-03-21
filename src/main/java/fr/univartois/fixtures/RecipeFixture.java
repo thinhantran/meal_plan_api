@@ -59,6 +59,7 @@ public class RecipeFixture extends Fixture {
       newRecipe.setName(recipe.getStrMeal());
       newRecipe.setThumbnailUrl(recipe.getStrMealThumb());
       newRecipe.setCategory(recipe.getStrCategory());
+      newRecipe.setDescription(recipe.getStrInstructions());
       List<IngredientRecipeQuantity> ingredientRecipeQuantities = new ArrayList<>();
       for (Map.Entry<String, String> entry : recipe.getIngredientAndMeasures().entrySet()) {
         IngredientRecipeQuantity ingredientRecipeQuantity = new IngredientRecipeQuantity();

@@ -5,7 +5,7 @@ import java.util.Optional;
 import fr.univartois.model.Ingredient;
 import fr.univartois.model.Recipe;
 
-public record IngredientPerRecipe(String recipeName, String ingredientName, String quantity) {
+public record IngredientPerRecipe(String recipeName, String ingredientName, String quantity, String description) {
 
   public IngredientPerRecipe(Ingredient ingredient, Recipe recipe) {
     this(
@@ -18,7 +18,8 @@ public record IngredientPerRecipe(String recipeName, String ingredientName, Stri
                 Optional.of(recipe).orElseThrow(NullPointerException::new).equals(iQR.getRecipe())
             )
             .findFirst().orElseThrow(() -> new IllegalArgumentException(recipe.getName() + " does not use " + ingredient.getName()))
-            .getQuantity()
+            .getQuantity(),
+        Optional.of(recipe).orElseThrow(NullPointerException::new).getDescription()
     );
   }
 }

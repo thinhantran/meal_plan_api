@@ -23,6 +23,7 @@ public class RecipesDTO {
     private Long idMeal;
 
     private IngredientCategory strCategory;
+    private String strInstructions;
 
     private String strIngredient1;
     private String strIngredient2;
