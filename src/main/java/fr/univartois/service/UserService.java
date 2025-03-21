@@ -51,6 +51,7 @@ public class UserService {
             DietaryRestriction dietaryRestriction = new DietaryRestriction();
             dietaryRestriction.setUser(user);
             dietaryRestriction.setRestrictionName(term);
+            user.addRestriction(dietaryRestriction);
             dietaryRestrictionRepository.persist(dietaryRestriction);
         }
         return getDietaryRestrictions(user);
