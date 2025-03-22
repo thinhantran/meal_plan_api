@@ -33,15 +33,6 @@ public class MealFixture extends Fixture {
   @Transactional
   @Override
   public void generateFakeData() {
-    Recipe recipe = new Recipe();
-    recipe.setRecipeId(999999L);
-    recipe.setName("Mon repas");
-    recipe.setCategory(IngredientCategory.MISCELLANEOUS);
-    recipe.setThumbnailUrl("https://static.wikia.nocookie.net/mario/images/3/38/Wario_illustration_SMP.png/revision/latest/scale-to-width-down/1000?cb=20240204215639&path-prefix=fr");
-    PlannedMeal plannedMeal = new PlannedMeal();
-    plannedMeal.setDate(LocalDate.now());
-    plannedMeal.setLunchOrDinnerOtherwise(true);
-    plannedMeal.setAssociatedRecipe(recipe);
-    mealRepository.persist(plannedMeal);
+    // UNUSED
   }
 }
