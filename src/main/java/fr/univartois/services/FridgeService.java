@@ -1,5 +1,6 @@
 package fr.univartois.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import fr.univartois.model.IngredientFridgeQuantity;
 import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.model.IngredientRemove;
 import fr.univartois.model.IngredientUnit;
+import fr.univartois.model.Recipe;
 import fr.univartois.model.User;
 import fr.univartois.model.Utensil;
 import fr.univartois.model.UtensilInput;
@@ -44,15 +46,18 @@ public class FridgeService {
 
   UtensilRepository utensilRepository;
 
+  RecipeService recipeService;
+
   public FridgeService(FridgeRepository fridgeRepository, FamilyRepository familyRepository,
       IngredientRepository ingredientRepository, AuthService authService,
-      IngredientFridgeQuantityRepository ingredientFridgeQuantityRepository, UtensilRepository utensilRepository) {
+      IngredientFridgeQuantityRepository ingredientFridgeQuantityRepository, UtensilRepository utensilRepository, RecipeService recipeService) {
     this.fridgeRepository = fridgeRepository;
     this.familyRepository = familyRepository;
     this.ingredientRepository = ingredientRepository;
     this.authService = authService;
     this.ingredientFridgeQuantityRepository = ingredientFridgeQuantityRepository;
     this.utensilRepository = utensilRepository;
+    this.recipeService = recipeService;
   }
 
   @Transactional
@@ -275,14 +280,17 @@ public class FridgeService {
     return fridgeRepository.getUtensilsByFamilyId(fridge.getFridgeId());
   }
 
-  private double convertToSmallerUnit(double quantity, IngredientUnit fromUnit, IngredientUnit toUnit) {
-    if (!fromUnit.getBaseUnit().equals(toUnit.getBaseUnit())) {
-      throw new IllegalArgumentException("Incompatible measurement unit conversion: " + fromUnit + " to " + toUnit);
-    }
-    return quantity * (fromUnit.getConversionFactor() / toUnit.getConversionFactor());
-  }
-
   public Response getIngredientsByRecipeId(JsonWebToken jsonWebToken, long recipeId) {
-    return null;
+    User user = authService.findUser(jsonWebToken.getSubject());
+    if (user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    Family family = user.getMemberRole().getFamily();
+    Recipe recipe = recipeService.getRecipeById(recipeId);
+    Set<Long> recipeIds = recipe.getIngredients().stream().map(i -> i.getIngredient().getIngredientId())
+        .collect(Collectors.toSet());
+    List<IngredientFridgeQuantity> ingredientFridgeQuantities = ingredientFridgeQuantityRepository.findByFamily(family)
+        .stream().filter(iFQ -> recipeIds.contains(iFQ.getIngredient().getIngredientId())).toList();
+    return Response.ok().entity(ingredientFridgeQuantities).build();
   }
 }

@@ -2,6 +2,7 @@ package fr.univartois.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -94,5 +95,23 @@ public class MealService {
     meal.setAssociatedRecipe(recipe);
     meal.setNumberOfParticipants(participants);
     return meal;
+  }
+
+  @Transactional
+  public Response cancelPlannedMeal(JsonWebToken jsonWebToken, Long id) {
+    User user = userService.findByUsername(jsonWebToken.getSubject());
+    if (user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    Family family = userService.findByUsername(jsonWebToken.getSubject()).getMemberRole().getFamily();
+    PlannedMeal meal = mealRepository.findById(id);
+    if (meal == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    if (!Objects.equals(meal.getAssociatedFamily(), family)) {
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
+    mealRepository.delete(meal);
+    return Response.status(Response.Status.NO_CONTENT).build();
   }
 }

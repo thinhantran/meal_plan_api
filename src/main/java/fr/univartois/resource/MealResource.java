@@ -112,8 +112,8 @@ public class MealResource {
 
   @Path("/plans/{plannedMealId}")
   @DELETE
-  public PlannedMeal cancelPlannedMeal(@PathParam("plannedMealId") int plannedMealId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Response cancelPlannedMeal(@PathParam("plannedMealId") long plannedMealId) {
+    return mealService.cancelPlannedMeal(jwt, plannedMealId);
   }
 
   @Path("/plans")

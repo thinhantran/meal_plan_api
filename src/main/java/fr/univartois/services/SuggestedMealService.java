@@ -176,9 +176,6 @@ public class SuggestedMealService {
       return responseForMeal;
     }
     Response responseForUserOnMeal = checkForRightsOnSuggestedMeal(user, suggestedMeal);
-    if (responseForUserOnMeal != null) {
-      return responseForUserOnMeal;
-    }
-    return null;
+    return responseForUserOnMeal;
   }
 }
