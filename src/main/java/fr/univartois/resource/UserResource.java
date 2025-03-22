@@ -44,6 +44,8 @@ import jakarta.ws.rs.core.Response;
 @SecurityRequirement(name = "AccessBearerAuthentication")
 public class UserResource {
 
+  private static final String USER_NOT_FOUND = "User not found";
+  
   private static final String NOT_SUPPORTED_YET = "Not supported yet.";
 
   UserService userService;
@@ -61,7 +63,7 @@ public class UserResource {
   public List<DietaryRestriction> getRestrictions() {
     User user = userService.findByUsername(jwt.getSubject());
     if(user == null) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException(USER_NOT_FOUND);
     }
     return userService.getDietaryRestrictions(user);
   }
@@ -73,7 +75,7 @@ public class UserResource {
   public List<DietaryRestriction> putRestrictions(@QueryParam("terms") List<String> terms) {
     User user = userService.findByUsername(jwt.getSubject());
     if(user == null) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException(USER_NOT_FOUND);
     }
     return userService.addDietaryRestriction(user, terms);
   }
@@ -84,7 +86,7 @@ public class UserResource {
   public Family getUserFamily() {
     User user = userService.findByUsername(jwt.getSubject());
     if(user == null) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException(USER_NOT_FOUND);
     }
     return userService.getFamily(user);
   }
@@ -95,7 +97,7 @@ public class UserResource {
   public Response leaveFamily(@PathParam("familyId") long familyId) {
     User user = userService.findByUsername(jwt.getSubject());
     if(user == null) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException(USER_NOT_FOUND);
     }
     return userService.leaveFamily(familyId, user.getUserId());
   }

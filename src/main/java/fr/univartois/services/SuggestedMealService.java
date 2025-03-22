@@ -175,7 +175,6 @@ public class SuggestedMealService {
     if (responseForMeal != null) {
       return responseForMeal;
     }
-    Response responseForUserOnMeal = checkForRightsOnSuggestedMeal(user, suggestedMeal);
-    return responseForUserOnMeal;
+    return checkForRightsOnSuggestedMeal(user, suggestedMeal);
   }
 }
