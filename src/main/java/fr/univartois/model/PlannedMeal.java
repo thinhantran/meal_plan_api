@@ -22,7 +22,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "date", "isLunchOrDinnerOtherwise" })
+    @UniqueConstraint(columnNames = { "date", "isLunchOrDinnerOtherwise", "family" })
 })
 @AllArgsConstructor
 @NoArgsConstructor

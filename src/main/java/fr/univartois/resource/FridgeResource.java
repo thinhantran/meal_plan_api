@@ -27,6 +27,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -145,6 +146,12 @@ public class FridgeResource {
       return Response.status(Response.Status.NOT_FOUND).entity("Ingredient not found").build();
     }
     return Response.ok(ingredients).build();
+  }
+
+  @GET
+  @Path("/ingredients/getByName")
+  public Response getIngredientsByRecipe(@QueryParam("recipeId") long recipeId) {
+    return fridgeService.getIngredientsByRecipeId(jwt, recipeId);
   }
 
   @GET

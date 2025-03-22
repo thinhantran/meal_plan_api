@@ -282,5 +282,7 @@ public class FridgeService {
     return quantity * (fromUnit.getConversionFactor() / toUnit.getConversionFactor());
   }
 
-
+  public Response getIngredientsByRecipeId(JsonWebToken jsonWebToken, long recipeId) {
+    return null;
+  }
 }
