@@ -59,9 +59,7 @@ public class AuthResource {
 
   @GET
   @Path("/users")
-  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
-  @Transactional
   @RolesAllowed("access")
   @SecurityRequirement(name = "AccessBearerAuthentication")
   public Response getUser() {
