@@ -119,26 +119,27 @@ public class MealResource {
   @Path("/plans")
   @POST
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-  public PlannedMeal planMealFromRecipe(@FormParam("recipeId") long recipeId, @FormParam("date") LocalDate date,
+  public Response planMealFromRecipe(@FormParam("recipeId") long recipeId, @FormParam("date") LocalDate date,
       @FormParam("isLunch") boolean isLunch, @FormParam("participants") int participants) {
-    return mealService.planMealFromRecipe(recipeId, date, isLunch, participants);
+    return mealService.planMealFromRecipe(jwt, recipeId, date, isLunch, participants);
   }
 
   @Path("/plans")
   @PUT
-  public PlannedMeal changeMealBasedFromRecipe(@QueryParam("newRecipeId") Long newRecipeId,
-      @QueryParam("date") LocalDate date, @QueryParam("isLunch") boolean isLunch) {
-    return mealService.changePlannedMealsRecipe(newRecipeId, date, isLunch);
+  public PlannedMeal changeMealBasedOnRecipe(@QueryParam("newRecipeId") Long newRecipeId,
+      @QueryParam("date") LocalDate date, @QueryParam("isLunch") boolean isLunch,
+      @QueryParam("participants") int participants) {
+    return mealService.changePlannedMealsRecipe(newRecipeId, date, isLunch, participants);
   }
 
   @GET
   public List<PlannedMeal> getMeals() {
-    return mealService.listAll();
+    return mealService.listAll(jwt);
   }
 
   @GET
   @Path("/weekly")
   public List<PlannedMeal> getMeals(@QueryParam("firstDayOfWeek") LocalDate firstDayOfWeek) {
-    return mealService.listAll(firstDayOfWeek);
+    return mealService.listAll(jwt, firstDayOfWeek);
   }
 }

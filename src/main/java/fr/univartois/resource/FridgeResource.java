@@ -13,7 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
 import fr.univartois.model.IngredientFridgeQuantity;
-import fr.univartois.model.IngredientFridgeQuantityInput;
+import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.model.IngredientRemove;
 import fr.univartois.model.Utensil;
 import fr.univartois.model.UtensilInput;
@@ -86,8 +86,7 @@ public class FridgeResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response addIngredientToFamilyFridge(IngredientFridgeQuantityInput ingredientFridgeQuantityInput) {
-    IngredientFridgeQuantity addedIngredient = fridgeService.addIngredient(jwt, ingredientFridgeQuantityInput);
-    return Response.status(Response.Status.CREATED).entity(addedIngredient).build();
+    return fridgeService.addIngredient(jwt, ingredientFridgeQuantityInput);
   }
 
   @POST

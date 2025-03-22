@@ -100,7 +100,6 @@ public class FamilyResource {
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Transactional
   public Response createFamilyForUser(@FormParam("name") String name) {
-    User user = userRepository.findByUsername(jwt.getSubject());
-    return familyService.createFamily(user, name);
+    return familyService.createFamily(jwt, name);
   }
 }

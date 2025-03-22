@@ -8,5 +8,5 @@ import lombok.Setter;
 public class IngredientRemove {
 
     private double amountToRemove;
-    private IngredientUnit measurementUnit;
+    private String measurementUnit;
 }

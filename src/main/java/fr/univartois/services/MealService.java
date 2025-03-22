@@ -3,35 +3,47 @@ package fr.univartois.services;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import fr.univartois.model.Family;
+import fr.univartois.model.MemberRole;
 import fr.univartois.model.PlannedMeal;
 import fr.univartois.model.Recipe;
+import fr.univartois.model.User;
 import fr.univartois.repository.MealRepository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class MealService {
+
+  UserService userService;
 
   MealRepository mealRepository;
 
   RecipeService recipeService;
 
-  public MealService(MealRepository mealRepository, RecipeService recipeService) {
+  public MealService(UserService userService, MealRepository mealRepository, RecipeService recipeService) {
+    this.userService = userService;
     this.mealRepository = mealRepository;
     this.recipeService = recipeService;
   }
 
-  public List<PlannedMeal> listAll() {
-    return mealRepository.findAll().list();
+  public List<PlannedMeal> listAll(JsonWebToken jwt) {
+    Family family = userService.findByUsername(jwt.getSubject()).getMemberRole().getFamily();
+    return mealRepository.find("associatedFamily", Sort.ascending("date", "isLunchOrDinnerOtherwise"), family).list();
   }
 
-  public List<PlannedMeal> listAll(LocalDate firstDayOfWeek) {
+  public List<PlannedMeal> listAll(JsonWebToken jwt, LocalDate firstDayOfWeek) {
+    Family family = userService.findByUsername(jwt.getSubject()).getMemberRole().getFamily();
     return mealRepository.list(
-        "from PlannedMeal m where m.date >= ?1 and m.date < ?2",
-        Sort.ascending("date"),
+        "from PlannedMeal m where m.date >= ?1 and m.date < ?2 and m.associatedFamily = ?3",
+        Sort.ascending("date", "isLunchOrDinnerOtherwise"),
         firstDayOfWeek,
-        firstDayOfWeek.plusWeeks(1)
+        firstDayOfWeek.plusWeeks(1),
+        family
     );
   }
 
@@ -40,7 +52,14 @@ public class MealService {
   }
 
   @Transactional
-  public PlannedMeal planMealFromRecipe(Long recipeId, LocalDate date, boolean isLunch, int participants) {
+  public Response planMealFromRecipe(JsonWebToken jsonWebToken, Long recipeId, LocalDate date, boolean isLunch, int participants) {
+    User user = userService.findByUsername(jsonWebToken.getSubject());
+    if (user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    if (!List.of(MemberRole.Role.ADMIN, MemberRole.Role.MANAGER).contains(user.getMemberRole().getCategory())) {
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
     Recipe recipe = recipeService.getRecipe(recipeId);
     if (recipe == null) {
       throw new IllegalArgumentException("Recipe not found");
@@ -51,11 +70,11 @@ public class MealService {
     meal.setAssociatedRecipe(recipe);
     meal.setNumberOfParticipants(participants);
     mealRepository.persist(meal);
-    return meal;
+    return Response.status(Response.Status.CREATED).entity(meal).build();
   }
 
   @Transactional
-  public PlannedMeal changePlannedMealsRecipe(Long newRecipeId, LocalDate currentDate, boolean isLunch) {
+  public PlannedMeal changePlannedMealsRecipe(Long newRecipeId, LocalDate currentDate, boolean isLunch, int participants) {
     Recipe recipe = recipeService.getRecipe(newRecipeId);
     if (recipe == null) {
       throw new IllegalArgumentException("Recipe not found");
@@ -64,6 +83,7 @@ public class MealService {
             currentDate, isLunch).singleResultOptional()
         .orElseThrow(() -> new IllegalArgumentException("No meal found at this date"));
     meal.setAssociatedRecipe(recipe);
+    meal.setNumberOfParticipants(participants);
     return meal;
   }
 }

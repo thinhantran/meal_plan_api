@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import fr.univartois.dtos.Message;
 import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
@@ -22,13 +23,23 @@ public class FamilyService {
 
     UserRepository userRepository;
 
-    public FamilyService(FamilyRepository familyRepository, MemberRoleRepository memberRoleRepository, UserRepository userRepository) {
+    FridgeService fridgeService;
+
+    public FamilyService(FamilyRepository familyRepository, MemberRoleRepository memberRoleRepository, UserRepository userRepository, FridgeService fridgeService) {
         this.familyRepository = familyRepository;
         this.memberRoleRepository = memberRoleRepository;
         this.userRepository = userRepository;
+        this.fridgeService = fridgeService;
     }
 
-    public Response createFamily(User user, String name) {
+    public Response createFamily(JsonWebToken jwt, String name) {
+        User user = userRepository.findByUsername(jwt.getSubject());
+        if (user == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You're not an user").build();
+        }
+        if (user.getMemberRole() != null) {
+            return Response.status(Response.Status.CONFLICT).entity(new Message("You're already part of a family")).build();
+        }
         Family family = new Family();
         MemberRole memberRole = new MemberRole();
         memberRole.setUser(user);
@@ -39,6 +50,7 @@ public class FamilyService {
         memberRoleRepository.persist(memberRole);
         familyRepository.persist(family);
         user.setMemberRole(memberRole);
+        fridgeService.createFridge(jwt);
         return Response.status(Response.Status.CREATED).entity(family).build();
     }
 

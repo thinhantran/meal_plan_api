@@ -16,7 +16,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import fr.univartois.dtos.CustomJwtPair;
 import fr.univartois.model.Family;
-import fr.univartois.model.IngredientFridgeQuantityInput;
+import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.model.IngredientUnit;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.core.MediaType;
@@ -47,14 +47,6 @@ class FridgeResourceTest {
         .then()
         .statusCode(201)
         .extract().body().as(Family.class);
-
-    given().when()
-        .contentType("application/json")
-        .header("Authorization", "Bearer " + customJwtPair.accessToken())
-        .post("/fridge")
-        .then()
-        .statusCode(201)
-        .body("fridgeId", is(notNullValue()));
   }
 
   @Test
@@ -88,7 +80,7 @@ class FridgeResourceTest {
         "Tomate",
         LocalDate.of(2025,3,10),
         5D,
-        IngredientUnit.KG
+        "KG"
     );
 
     ingredientFridgeId = given().when()
@@ -109,7 +101,7 @@ class FridgeResourceTest {
         "Tomate",
         LocalDate.of(2025, 03, 10),
         10.0,
-        IngredientUnit.KG);
+        "KG");
 
     given().when()
         .contentType("application/json")

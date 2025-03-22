@@ -8,11 +8,12 @@ import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import fr.univartois.dtos.Message;
 import fr.univartois.model.Family;
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
 import fr.univartois.model.IngredientFridgeQuantity;
-import fr.univartois.model.IngredientFridgeQuantityInput;
+import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.model.IngredientRemove;
 import fr.univartois.model.IngredientUnit;
 import fr.univartois.model.User;
@@ -25,6 +26,7 @@ import fr.univartois.repository.IngredientRepository;
 import fr.univartois.repository.UtensilRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class FridgeService {
@@ -70,6 +72,12 @@ public class FridgeService {
     fridge.setFamily(family);
     family.setFridge(fridge);
     fridgeRepository.persist(fridge);
+    for (Ingredient ingredient : ingredientRepository.listAll()) {
+      IngredientFridgeQuantity ingredientFridgeQuantity = new IngredientFridgeQuantity();
+      ingredientFridgeQuantity.setIngredient(ingredient);
+      ingredientFridgeQuantity.setFridge(fridge);
+      ingredientFridgeQuantity.setQuantity(0);
+    }
     return fridge;
   }
 
@@ -85,16 +93,21 @@ public class FridgeService {
   }
 
   @Transactional
-  public IngredientFridgeQuantity addIngredient(JsonWebToken jsonWebToken, IngredientFridgeQuantityInput input) {
-    IngredientFridgeQuantity ingredientFridgeQuantity = new IngredientFridgeQuantity();
-    Ingredient ingredient = ingredientRepository.findByName(input.getIngredientName());
+  public Response addIngredient(JsonWebToken jsonWebToken, IngredientFridgeQuantityInput input) {
     User user = authService.findUser(jsonWebToken.getSubject());
-    Fridge fridge = user.getMemberRole().getFamily().getFridge();
+    Family family = familyRepository.findByUser(user);
+    List<IngredientFridgeQuantity> existingList = ingredientFridgeQuantityRepository.findByFamily(family);
+    Ingredient ingredient = ingredientRepository.findByName(input.getIngredientName());
+    if (existingList.stream().map(IngredientFridgeQuantity::getIngredient).anyMatch(ingredient::equals)) {
+      return Response.status(Response.Status.CONFLICT).entity(new Message("Ingredient is already present")).build();
+    }
+    IngredientFridgeQuantity ingredientFridgeQuantity = new IngredientFridgeQuantity();
+    Fridge fridge = family.getFridge();
     ingredientFridgeQuantity.setQuantity(input.getQuantity());
     ingredientFridgeQuantity.setIngredient(ingredient);
     ingredientFridgeQuantity.setFridge(fridge);
     ingredientFridgeQuantityRepository.persist(ingredientFridgeQuantity);
-    return ingredientFridgeQuantity;
+    return Response.status(Response.Status.CREATED).entity(ingredientFridgeQuantity).build();
   }
 
   @Transactional
@@ -115,13 +128,7 @@ public class FridgeService {
           + ingredientFridgeQuantity.getIngredient().getName() + ", but got: " + input.getIngredientName());
     }
 
-    if (input.getMeasurementUnit() != null && !Objects.equals(input.getMeasurementUnit(),
-        ingredientFridgeQuantity.getMeasurementUnit())) {
-      if (input.getQuantity() == null) {
-        ingredientFridgeQuantity.setQuantity(convertToSmallerUnit(ingredientFridgeQuantity.getQuantity(),
-            ingredientFridgeQuantity.getMeasurementUnit(),
-            input.getMeasurementUnit()));
-      }
+    if (input.getMeasurementUnit() != null) {
       ingredientFridgeQuantity.setMeasurementUnit(ingredientFridgeQuantity.getMeasurementUnit());
     }
 
@@ -160,12 +167,7 @@ public class FridgeService {
     if (ingredientFridgeQuantity.getFridge().getFamily().getId() != family.getId()) {
       throw new IllegalArgumentException("Ingredient does not belong to the specified family fridge.");
     }
-    if (ingredientFridgeQuantity.getMeasurementUnit() != request.getMeasurementUnit()) {
-      ingredientFridgeQuantity.setQuantity(
-          convertToSmallerUnit(ingredientFridgeQuantity.getQuantity(),
-              ingredientFridgeQuantity.getMeasurementUnit(),
-              request.getMeasurementUnit())
-      );
+    if (request.getMeasurementUnit() != null) {
       ingredientFridgeQuantity.setMeasurementUnit(request.getMeasurementUnit()); // Cập nhật đơn vị mới
     }
     if (ingredientFridgeQuantity.getQuantity() < request.getAmountToRemove()) {

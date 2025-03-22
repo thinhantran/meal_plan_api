@@ -1,7 +1,8 @@
-package fr.univartois.model;
+package fr.univartois.dtos;
 
 import java.time.LocalDate;
 
+import fr.univartois.model.IngredientUnit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,5 @@ public class IngredientFridgeQuantityInput {
 
   private Double quantity;
 
-  private IngredientUnit measurementUnit;
+  private String measurementUnit;
 }

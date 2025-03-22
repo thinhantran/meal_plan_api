@@ -37,5 +37,5 @@ public class IngredientFridgeQuantity {
   @Column(nullable = false)
   private double quantity;
 
-  private IngredientUnit measurementUnit;
+  private String measurementUnit;
 }
