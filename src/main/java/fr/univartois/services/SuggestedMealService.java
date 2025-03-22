@@ -58,12 +58,13 @@ public class SuggestedMealService {
   }
 
   @Transactional
-  public Response suggestMeal(JsonWebToken jwt, String recipeName, LocalDate date, boolean isLunch, int participants) {
+  public Response suggestMeal(JsonWebToken jwt, long recipeId, LocalDate date, boolean isLunch, int participants) {
     User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
     Response response = checksToSuggestMeal(user);
     if (response != null) return response;
-    Recipe recipe = Objects.requireNonNull(recipeService.getRecipeByName(Objects.requireNonNull(recipeName)));
+    Recipe recipe = Objects.requireNonNull(recipeService.getRecipeById(recipeId));
     SuggestedMeal suggestedMeal = new SuggestedMeal();
+    suggestedMeal.setProposerUsername(user.getUsername());
     suggestedMeal.setAssociatedRecipe(recipe);
     suggestedMeal.setAssociatedFamily(user.getMemberRole().getFamily());
     suggestedMeal.setDate(date);
@@ -144,7 +145,7 @@ public class SuggestedMealService {
   }
 
   public Response checkForRightToSuggestMeal(User user) {
-    return List.of(PROPOSER, MANAGER, ADMIN).contains(user.getMemberRole().getCategory())
+    return !List.of(PROPOSER, MANAGER, ADMIN).contains(user.getMemberRole().getCategory())
         ? Response.status(Response.Status.FORBIDDEN).build() : null;
   }
 

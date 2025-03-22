@@ -66,9 +66,9 @@ public class MealResource {
 
   @Path("/suggestions")
   @POST
-  public Response suggestMeal(@FormParam("recipeName") String recipeName, @FormParam("date") LocalDate date,
+  public Response suggestMeal(@FormParam("recipeId") long recipeId, @FormParam("date") LocalDate date,
       @FormParam("isLunch") boolean isLunch, @FormParam("participants") int participants) {
-    return suggestedMealService.suggestMeal(jwt, recipeName, date, isLunch, participants);
+    return suggestedMealService.suggestMeal(jwt, recipeId, date, isLunch, participants);
   }
 
   @Path("/suggestions/{suggestedMealId}/votes")

@@ -6,6 +6,7 @@ import java.util.List;
 import fr.univartois.model.PlannedMeal;
 import fr.univartois.model.Recipe;
 import fr.univartois.repository.MealRepository;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
@@ -28,6 +29,7 @@ public class MealService {
   public List<PlannedMeal> listAll(LocalDate firstDayOfWeek) {
     return mealRepository.list(
         "from PlannedMeal m where m.date >= ?1 and m.date < ?2",
+        Sort.ascending("date"),
         firstDayOfWeek,
         firstDayOfWeek.plusWeeks(1)
     );
