@@ -102,4 +102,5 @@ public class FamilyResource {
   public Response createFamilyForUser(@FormParam("name") String name) {
     return familyService.createFamily(jwt, name);
   }
+
 }

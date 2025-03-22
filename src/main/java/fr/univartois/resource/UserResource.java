@@ -2,6 +2,16 @@ package fr.univartois.resource;
 
 import java.util.List;
 
+import fr.univartois.model.DietaryRestriction;
+import fr.univartois.model.Family;
+import fr.univartois.model.User;
+import fr.univartois.service.UserService;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
@@ -56,14 +66,23 @@ public class UserResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public List<DietaryRestriction> getRestrictions() {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_YET);
+    User user = userService.findByUsername(jwt.getSubject());
+    if(user == null) {
+      throw new NotFoundException("User not found");
+    }
+    return userService.getDietaryRestrictions(user);
   }
 
   @Path("/restrictions")
   @PUT
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Transactional
   public List<DietaryRestriction> putRestrictions(@QueryParam("terms") List<String> terms) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_YET);
+    User user = userService.findByUsername(jwt.getSubject());
+    if(user == null) {
+      throw new NotFoundException("User not found");
+    }
+    return userService.addDietaryRestriction(user, terms);
   }
 
   @Path("/families/")
@@ -75,6 +94,17 @@ public class UserResource {
       throw new NotFoundException("User not found");
     }
     return userService.getFamily(user);
+  }
+
+  @Path("/families/{familyId}")
+  @DELETE
+  @Transactional
+  public Response leaveFamily(@PathParam("familyId") long familyId) {
+    User user = userService.findByUsername(jwt.getSubject());
+    if(user == null) {
+      throw new NotFoundException("User not found");
+    }
+    return userService.leaveFamily(familyId, user.getUserId());
   }
 
   @Path("/families/{familyId}")

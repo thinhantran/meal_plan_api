@@ -3,6 +3,7 @@ package fr.univartois.model;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
@@ -23,7 +24,7 @@ import lombok.Setter;
 @Table(name = "user_table")
 public class User {
 
-  @Transient
+  @OneToMany(mappedBy = "user", orphanRemoval = true)
   List<DietaryRestriction> dietaryRestrictions;
 
   @Id
@@ -46,5 +47,9 @@ public class User {
   @Override
   public int hashCode() {
     return Objects.hashCode(username);
+  }
+
+  public void addRestriction(DietaryRestriction dietaryRestriction) {
+    dietaryRestrictions.add(dietaryRestriction);
   }
 }
