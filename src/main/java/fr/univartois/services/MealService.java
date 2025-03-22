@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import fr.univartois.dtos.Message;
 import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.PlannedMeal;
@@ -29,7 +30,8 @@ public class MealService {
 
   SuggestedMealRepository suggestedMealRepository;
 
-  public MealService(UserService userService, MealRepository mealRepository, RecipeService recipeService, SuggestedMealRepository suggestedMealRepository) {
+  public MealService(UserService userService, MealRepository mealRepository, RecipeService recipeService,
+      SuggestedMealRepository suggestedMealRepository) {
     this.userService = userService;
     this.mealRepository = mealRepository;
     this.recipeService = recipeService;
@@ -57,7 +59,8 @@ public class MealService {
   }
 
   @Transactional
-  public Response planMealFromRecipe(JsonWebToken jsonWebToken, Long recipeId, LocalDate date, boolean isLunch, int participants) {
+  public Response planMealFromRecipe(JsonWebToken jsonWebToken, Long recipeId, LocalDate date, boolean isLunch,
+      int participants) {
     User user = userService.findByUsername(jsonWebToken.getSubject());
     if (user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -84,17 +87,27 @@ public class MealService {
   }
 
   @Transactional
-  public PlannedMeal changePlannedMealsRecipe(Long newRecipeId, LocalDate currentDate, boolean isLunch, int participants) {
+  public Response changePlannedMealsRecipe(JsonWebToken jsonWebToken, Long mealId, Long newRecipeId,
+      LocalDate newDate, Boolean newIsLunch, Integer participants) {
+    PlannedMeal meal = getPlannedMeal(mealId);
+    if (meal == null) {
+      return Response.status(Response.Status.NOT_FOUND).entity(new Message("Meal not found")).build();
+    }
     Recipe recipe = recipeService.getRecipe(newRecipeId);
     if (recipe == null) {
-      throw new IllegalArgumentException("Recipe not found");
+      return Response.status(Response.Status.NOT_FOUND).entity(new Message("New Recipe not found")).build();
     }
-    PlannedMeal meal = mealRepository.find("date = ?1 and isLunchOrDinnerOtherwise = ?2",
-            currentDate, isLunch).singleResultOptional()
-        .orElseThrow(() -> new IllegalArgumentException("No meal found at this date"));
+    if (newDate != null) {
+      meal.setDate(newDate);
+    }
+    if (newIsLunch != null) {
+      meal.setLunchOrDinnerOtherwise(newIsLunch);
+    }
     meal.setAssociatedRecipe(recipe);
-    meal.setNumberOfParticipants(participants);
-    return meal;
+    if (participants != null) {
+      meal.setNumberOfParticipants(participants);
+    }
+    return Response.status(Response.Status.ACCEPTED).entity(meal).build();
   }
 
   @Transactional

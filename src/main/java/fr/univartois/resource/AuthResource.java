@@ -17,6 +17,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -54,6 +55,19 @@ public class AuthResource {
   public AuthResource(JsonWebToken jwt, AuthService authService) {
     this.jwt = jwt;
     this.authService = authService;
+  }
+
+  @GET
+  @Path("/users")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  @Transactional
+  public Response getUser() {
+    User user = authService.hasAssociatedUser(jwt);
+    if (user == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    return Response.status(Response.Status.OK).build();
   }
 
   @POST

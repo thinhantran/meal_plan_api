@@ -126,10 +126,10 @@ public class MealResource {
 
   @Path("/plans")
   @PUT
-  public PlannedMeal changeMealBasedOnRecipe(@QueryParam("newRecipeId") Long newRecipeId,
-      @QueryParam("date") LocalDate date, @QueryParam("isLunch") boolean isLunch,
-      @QueryParam("participants") int participants) {
-    return mealService.changePlannedMealsRecipe(newRecipeId, date, isLunch, participants);
+  public Response changeMealBasedOnRecipe(@QueryParam("mealId") long mealId,
+      @QueryParam("newRecipeId") Long newRecipeId, @QueryParam("date") LocalDate date,
+      @QueryParam("isLunch") boolean isLunch, @QueryParam("participants") int participants) {
+    return mealService.changePlannedMealsRecipe(jwt, mealId, newRecipeId, date, isLunch, participants);
   }
 
   @GET
