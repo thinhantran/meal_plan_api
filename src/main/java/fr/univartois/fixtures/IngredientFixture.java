@@ -37,7 +37,10 @@ public class IngredientFixture extends Fixture {
 
   @Override
   @Transactional
-  public void generateFakeData() {
+  public void generateDataFromOutsideSource() {
+    if (!ingredientRepository.listAll().isEmpty()) {
+      return;
+    }
     List<IngredientDTO> list = theMealDBApi.getAllIngredients("list").getMeals();
     for (IngredientDTO dto : list) {
       Ingredient ingredient = new Ingredient();
@@ -45,10 +48,5 @@ public class IngredientFixture extends Fixture {
       ingredient.setName(dto.getStrIngredient());
       ingredientRepository.persist(ingredient);
     }
-  }
-
-  @Override
-  public void generateSingleFakeData() {
-    // UNUSED
   }
 }

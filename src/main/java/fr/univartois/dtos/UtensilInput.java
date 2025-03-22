@@ -1,4 +1,4 @@
-package fr.univartois.model;
+package fr.univartois.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

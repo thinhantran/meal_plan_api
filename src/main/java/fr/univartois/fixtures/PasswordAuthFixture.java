@@ -43,7 +43,7 @@ public class PasswordAuthFixture extends Fixture {
 
     @Override
     @Transactional
-    public void generateSingleFakeData() {
+    public void generateDataFromOutsideSource() {
         // UNUSED
     }
 }

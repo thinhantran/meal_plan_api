@@ -1,10 +1,5 @@
 package fr.univartois.fixtures;
 
-import java.time.LocalDate;
-
-import fr.univartois.model.IngredientCategory;
-import fr.univartois.model.PlannedMeal;
-import fr.univartois.model.Recipe;
 import fr.univartois.repository.MealRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -26,13 +21,7 @@ public class MealFixture extends Fixture {
 
   @Transactional
   @Override
-  public void generateSingleFakeData() {
-    // UNUSED
-  }
-
-  @Transactional
-  @Override
-  public void generateFakeData() {
+  public void generateDataFromOutsideSource() {
     // UNUSED
   }
 }

@@ -42,11 +42,11 @@ public class FixtureInitializer {
             recipeFixture.generateRealData();
             mealFixture.generateRealData();
         } else if (fakeFixturesEnabled) {
-            userFixture.generateFakeData();
-            passwordAuthFixture.generateFakeData();
-            ingredientFixture.generateFakeData();
-            recipeFixture.generateFakeData();
-            mealFixture.generateFakeData();
+            userFixture.generateDataFromOutsideSource();
+            passwordAuthFixture.generateDataFromOutsideSource();
+            ingredientFixture.generateDataFromOutsideSource();
+            recipeFixture.generateDataFromOutsideSource();
+            mealFixture.generateDataFromOutsideSource();
         }
     }
 }

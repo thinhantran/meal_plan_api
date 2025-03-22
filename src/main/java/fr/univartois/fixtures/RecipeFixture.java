@@ -38,14 +38,12 @@ public class RecipeFixture extends Fixture {
     // UNUSED
   }
 
-  @Override
-  public void generateSingleFakeData() {
-    // UNUSED
-  }
-
   @Transactional
   @Override
-  public void generateFakeData() {
+  public void generateDataFromOutsideSource() {
+    if (!recipeRepository.listAll().isEmpty()) {
+      return;
+    }
     List<RecipeDTO> recipes = new ArrayList<>();
     for (Character c : alphabet) {
       List<RecipeDTO> recipeDTOs = theMealDBApi.getRecipesByFirstLetter(c.toString()).getMeals();

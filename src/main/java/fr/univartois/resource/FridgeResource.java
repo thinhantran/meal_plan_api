@@ -11,12 +11,12 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
 import fr.univartois.dtos.IngredientFridgeQuantityInput;
+import fr.univartois.dtos.UtensilInput;
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
 import fr.univartois.model.IngredientFridgeQuantity;
 import fr.univartois.model.IngredientRemove;
 import fr.univartois.model.Utensil;
-import fr.univartois.model.UtensilInput;
 import fr.univartois.services.FridgeService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.Consumes;

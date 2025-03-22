@@ -29,7 +29,7 @@ public class UserFixture extends Fixture {
 
     @Transactional
     @Override
-    public void generateSingleFakeData() {
+    public void generateDataFromOutsideSource() {
         // UNUSED
     }
 }

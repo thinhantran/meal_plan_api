@@ -1,8 +1,6 @@
 package fr.univartois.model;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
@@ -12,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,12 +35,6 @@ public class SuggestedMeal {
 
   @ManyToOne(fetch = FetchType.EAGER)
   private Family associatedFamily;
-
-  @Transient
-  private List<User> expectedPeople;
-
-  @Transient
-  private Map<User, Integer> expectedPeopleForLeftovers;
 
   @ManyToMany
   private Set<User> votes;

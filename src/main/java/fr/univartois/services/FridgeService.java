@@ -10,6 +10,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.dtos.Message;
+import fr.univartois.dtos.UtensilInput;
 import fr.univartois.model.Family;
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
@@ -18,7 +19,6 @@ import fr.univartois.model.IngredientRemove;
 import fr.univartois.model.Recipe;
 import fr.univartois.model.User;
 import fr.univartois.model.Utensil;
-import fr.univartois.model.UtensilInput;
 import fr.univartois.repository.FamilyRepository;
 import fr.univartois.repository.FridgeRepository;
 import fr.univartois.repository.IngredientFridgeQuantityRepository;
