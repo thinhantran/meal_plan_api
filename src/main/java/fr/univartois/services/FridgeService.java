@@ -1,6 +1,5 @@
 package fr.univartois.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -9,14 +8,13 @@ import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.dtos.Message;
 import fr.univartois.model.Family;
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
 import fr.univartois.model.IngredientFridgeQuantity;
-import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.model.IngredientRemove;
-import fr.univartois.model.IngredientUnit;
 import fr.univartois.model.Recipe;
 import fr.univartois.model.User;
 import fr.univartois.model.Utensil;

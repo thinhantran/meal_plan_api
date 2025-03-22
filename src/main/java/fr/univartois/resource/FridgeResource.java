@@ -10,10 +10,10 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
+import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.model.Fridge;
 import fr.univartois.model.Ingredient;
 import fr.univartois.model.IngredientFridgeQuantity;
-import fr.univartois.dtos.IngredientFridgeQuantityInput;
 import fr.univartois.model.IngredientRemove;
 import fr.univartois.model.Utensil;
 import fr.univartois.model.UtensilInput;

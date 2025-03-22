@@ -1,5 +1,7 @@
 package fr.univartois.services;
 
+import java.util.List;
+
 import fr.univartois.model.DietaryRestriction;
 import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
@@ -10,8 +12,6 @@ import fr.univartois.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
-
-import java.util.List;
 
 @ApplicationScoped
 public class UserService {

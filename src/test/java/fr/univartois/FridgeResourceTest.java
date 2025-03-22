@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 
 import java.time.LocalDate;
 
@@ -15,9 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import fr.univartois.dtos.CustomJwtPair;
-import fr.univartois.model.Family;
 import fr.univartois.dtos.IngredientFridgeQuantityInput;
-import fr.univartois.model.IngredientUnit;
+import fr.univartois.model.Family;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.core.MediaType;
 
