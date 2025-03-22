@@ -124,8 +124,8 @@ public class SuggestedMealService {
     suggestedMealRepository.deleteById(suggestedMealId);
     mealRepository.persist(plannedMeal);
     suggestedMealRepository.delete(
-        "DELETE FROM SuggestedMeal s WHERE s.date = ?1 AND s.isLunchOrDinnerOtherwise = ?2",
-        plannedMeal.getDate(), plannedMeal.isLunchOrDinnerOtherwise()
+        "DELETE FROM SuggestedMeal s WHERE s.date = ?1 AND s.isLunchOrDinnerOtherwise = ?2 AND s.associatedFamily = ?3",
+        plannedMeal.getDate(), plannedMeal.isLunchOrDinnerOtherwise(), plannedMeal.getAssociatedFamily()
     );
     return Response.status(Response.Status.CREATED).entity(plannedMeal).build();
   }

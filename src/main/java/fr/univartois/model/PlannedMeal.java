@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -22,7 +23,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "date", "isLunchOrDinnerOtherwise", "associatedFamily" })
+    @UniqueConstraint(columnNames = { "date", "isLunchOrDinnerOtherwise", "associatedFamilyId" })
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,6 +42,7 @@ public class PlannedMeal {
   private Recipe associatedRecipe;
 
   @ManyToOne
+  @JoinColumn(name = "associatedFamilyId")
   private Family associatedFamily;
 
   @Transient

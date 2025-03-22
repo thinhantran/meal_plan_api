@@ -11,6 +11,7 @@ import fr.univartois.model.PlannedMeal;
 import fr.univartois.model.Recipe;
 import fr.univartois.model.User;
 import fr.univartois.repository.MealRepository;
+import fr.univartois.repository.SuggestedMealRepository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -25,10 +26,13 @@ public class MealService {
 
   RecipeService recipeService;
 
-  public MealService(UserService userService, MealRepository mealRepository, RecipeService recipeService) {
+  SuggestedMealRepository suggestedMealRepository;
+
+  public MealService(UserService userService, MealRepository mealRepository, RecipeService recipeService, SuggestedMealRepository suggestedMealRepository) {
     this.userService = userService;
     this.mealRepository = mealRepository;
     this.recipeService = recipeService;
+    this.suggestedMealRepository = suggestedMealRepository;
   }
 
   public List<PlannedMeal> listAll(JsonWebToken jwt) {
@@ -68,8 +72,13 @@ public class MealService {
     meal.setDate(date);
     meal.setLunchOrDinnerOtherwise(isLunch);
     meal.setAssociatedRecipe(recipe);
+    meal.setAssociatedFamily(user.getMemberRole().getFamily());
     meal.setNumberOfParticipants(participants);
     mealRepository.persist(meal);
+    suggestedMealRepository.delete(
+        "DELETE FROM SuggestedMeal s WHERE s.date = ?1 AND s.isLunchOrDinnerOtherwise = ?2 AND s.associatedFamily = ?3",
+        meal.getDate(), meal.isLunchOrDinnerOtherwise(), meal.getAssociatedFamily()
+    );
     return Response.status(Response.Status.CREATED).entity(meal).build();
   }
 

@@ -35,7 +35,7 @@ public class Fridge {
   @JsonManagedReference("fridge")
   private List<IngredientFridgeQuantity> ingredients;
 
-  @OneToMany(mappedBy = "fridge",cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @OneToMany(mappedBy = "fridge",cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
   @JsonManagedReference("utensils")
   private List<Utensil> ustensils;
 }
