@@ -80,6 +80,7 @@ public class FridgeService {
       ingredientFridgeQuantity.setIngredient(ingredient);
       ingredientFridgeQuantity.setFridge(fridge);
       ingredientFridgeQuantity.setQuantity(0);
+      ingredientFridgeQuantityRepository.persist(ingredientFridgeQuantity);
     }
     return fridge;
   }

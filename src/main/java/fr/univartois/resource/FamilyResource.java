@@ -1,7 +1,5 @@
 package fr.univartois.resource;
 
-import java.util.List;
-
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
@@ -9,6 +7,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
+import fr.univartois.model.Family;
 import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import fr.univartois.repository.MemberRoleRepository;
@@ -31,15 +30,16 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @SecuritySchemes(value = {
-        @SecurityScheme(
-                bearerFormat = "JWT",
-                scheme = "bearer",
-                securitySchemeName = "AccessBearerAuthentication",
-                apiKeyName = "Authorization",
-                type = SecuritySchemeType.HTTP,
-                description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer xxx\")",
-                in = SecuritySchemeIn.HEADER
-        )
+    @SecurityScheme(
+        bearerFormat = "JWT",
+        scheme = "bearer",
+        securitySchemeName = "AccessBearerAuthentication",
+        apiKeyName = "Authorization",
+        type = SecuritySchemeType.HTTP,
+        description = "Uses the access token provided at authentication (Header \"Authentification\", Value \"Bearer " +
+            "xxx\")",
+        in = SecuritySchemeIn.HEADER
+    )
 })
 @RolesAllowed("access")
 @SecurityRequirement(name = "AccessBearerAuthentication")
@@ -66,14 +66,17 @@ public class FamilyResource {
     return familyService.get(jwt);
   }
 
-  @Path("/{familyId}/members")
+  @Path("/members")
   @GET
-  public List<User> getUsers(@PathParam("familyId") long familyId) {
+  public Response getUsers() {
     User user = userRepository.findByUsername(jwt.getSubject());
-    if(memberRoleRepository.findByUserAndFamily(familyId, user.getUserId()) == null) {
-      throw new ForbiddenException();
+
+    if (user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-    return familyService.findMembers(familyId);
+    Family family = user.getMemberRole().getFamily();
+    return Response.status(Response.Status.OK).entity(
+        family.getMemberRoles().stream().map(MemberRole::getUser).toList()).build();
   }
 
   @Path("/{familyCode}")
@@ -88,7 +91,7 @@ public class FamilyResource {
   @GET
   public MemberRole.Role getRole(@PathParam("familyId") int familyId, @PathParam("userId") long userId) {
     User user = userRepository.findByUsername(jwt.getSubject());
-    if(memberRoleRepository.findByUserAndFamily(familyId, user.getUserId()) == null) {
+    if (memberRoleRepository.findByUserAndFamily(familyId, user.getUserId()) == null) {
       throw new ForbiddenException();
     }
     return familyService.getMemberRole(familyId, userId);

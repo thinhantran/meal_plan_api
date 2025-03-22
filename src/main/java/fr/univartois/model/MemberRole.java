@@ -3,6 +3,8 @@ package fr.univartois.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +35,7 @@ public class MemberRole {
   @ManyToOne
   private Family family;
 
+  @Enumerated(value = EnumType.STRING)
   private Role category;
 
   public enum Role {
