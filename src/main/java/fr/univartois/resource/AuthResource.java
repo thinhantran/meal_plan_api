@@ -62,6 +62,8 @@ public class AuthResource {
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
   @Transactional
+  @RolesAllowed("access")
+  @SecurityRequirement(name = "AccessBearerAuthentication")
   public Response getUser() {
     User user = authService.hasAssociatedUser(jwt);
     if (user == null) {
