@@ -24,7 +24,7 @@ import lombok.Setter;
 })
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlannedMeal {
+public class PlannedMeal extends AbstractMeal {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -30,12 +30,15 @@ public class MealService {
 
   SuggestedMealRepository suggestedMealRepository;
 
+  SuggestedMealService suggestedMealService;
+
   public MealService(UserService userService, MealRepository mealRepository, RecipeService recipeService,
-      SuggestedMealRepository suggestedMealRepository) {
+      SuggestedMealRepository suggestedMealRepository, SuggestedMealService suggestedMealService) {
     this.userService = userService;
     this.mealRepository = mealRepository;
     this.recipeService = recipeService;
     this.suggestedMealRepository = suggestedMealRepository;
+    this.suggestedMealService = suggestedMealService;
   }
 
   public List<PlannedMeal> listAll(JsonWebToken jwt) {
@@ -65,6 +68,10 @@ public class MealService {
     if (user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
+    Response check = suggestedMealService.checkForRightToPlanMeal(user);
+    if (check != null) {
+      return check;
+    }
     if (!List.of(MemberRole.Role.ADMIN, MemberRole.Role.MANAGER).contains(user.getMemberRole().getCategory())) {
       return Response.status(Response.Status.FORBIDDEN).build();
     }
@@ -89,9 +96,11 @@ public class MealService {
   @Transactional
   public Response changePlannedMealsRecipe(JsonWebToken jsonWebToken, Long mealId, Long newRecipeId,
       LocalDate newDate, Boolean newIsLunch, Integer participants) {
+    User user = userService.findByUsername(jsonWebToken.getSubject());
     PlannedMeal meal = getPlannedMeal(mealId);
-    if (meal == null) {
-      return Response.status(Response.Status.NOT_FOUND).entity(new Message("Meal not found")).build();
+    Response check = suggestedMealService.checksToPlanMeal(user, meal);
+    if (check != null) {
+      return check;
     }
     Recipe recipe = recipeService.getRecipe(newRecipeId);
     if (recipe == null) {
@@ -116,13 +125,10 @@ public class MealService {
     if (user == null || user.getMemberRole() == null || user.getMemberRole().getFamily() == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-    Family family = userService.findByUsername(jsonWebToken.getSubject()).getMemberRole().getFamily();
     PlannedMeal meal = mealRepository.findById(id);
-    if (meal == null) {
-      return Response.status(Response.Status.NOT_FOUND).build();
-    }
-    if (!Objects.equals(meal.getAssociatedFamily(), family)) {
-      return Response.status(Response.Status.FORBIDDEN).build();
+    Response check = suggestedMealService.checksToPlanMeal(user, meal);
+    if (check != null) {
+      return check;
     }
     mealRepository.delete(meal);
     return Response.status(Response.Status.NO_CONTENT).build();

@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import fr.univartois.model.AbstractMeal;
 import fr.univartois.model.Family;
 import fr.univartois.model.PlannedMeal;
 import fr.univartois.model.Recipe;
@@ -37,9 +38,10 @@ public class SuggestedMealService {
 
   RecipeService recipeService;
 
-  public SuggestedMealService(SuggestedMealRepository suggestedMealRepository, FamilyRepository familyRepository,
-      UserRepository userRepository, RecipeService recipeService) {
+  public SuggestedMealService(SuggestedMealRepository suggestedMealRepository, MealRepository mealRepository,
+      FamilyRepository familyRepository, UserRepository userRepository, RecipeService recipeService) {
     this.suggestedMealRepository = suggestedMealRepository;
+    this.mealRepository = mealRepository;
     this.familyRepository = familyRepository;
     this.userRepository = userRepository;
     this.recipeService = recipeService;
@@ -95,6 +97,7 @@ public class SuggestedMealService {
     return Response.status(Response.Status.OK).entity(suggestedMeal.getVotes().contains(targetUser)).build();
   }
 
+  @Transactional
   public Response voteOnSuggestion(JsonWebToken jwt, long suggestedMealId) {
     User user = userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject()));
     SuggestedMeal suggestedMeal = suggestedMealRepository.findById(suggestedMealId);
@@ -105,6 +108,7 @@ public class SuggestedMealService {
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 
+  @Transactional
   public Response unvoteOnSuggestion(JsonWebToken jwt, long suggestedMealId) {
     User user = userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject()));
     SuggestedMeal suggestedMeal = suggestedMealRepository.findById(suggestedMealId);
@@ -115,6 +119,7 @@ public class SuggestedMealService {
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 
+  @Transactional
   public Response planMealFromSuggestion(JsonWebToken jwt, long suggestedMealId) {
     User user = userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject()));
     SuggestedMeal suggestedMeal = suggestedMealRepository.findById(suggestedMealId);
@@ -134,11 +139,11 @@ public class SuggestedMealService {
     return user == null ? Response.status(Response.Status.UNAUTHORIZED).build() : null;
   }
 
-  public Response checkForSuggestedMeal(SuggestedMeal suggestedMeal) {
+  public Response checkForSuggestedMeal(AbstractMeal suggestedMeal) {
     return suggestedMeal == null ? Response.status(Response.Status.NOT_FOUND).build() : null;
   }
 
-  public Response checkForRightsOnSuggestedMeal(User user, SuggestedMeal suggestedMeal) {
+  public Response checkForRightsOnSuggestedMeal(User user, AbstractMeal suggestedMeal) {
     return !Objects.equals(Objects.requireNonNull(suggestedMeal.getAssociatedFamily()),
         Objects.requireNonNull(user.getMemberRole().getFamily()))
         ? Response.status(Response.Status.FORBIDDEN).build() : null;
@@ -160,13 +165,13 @@ public class SuggestedMealService {
     return checkForRightToSuggestMeal(user);
   }
 
-  public Response checksToPlanMeal(User user, SuggestedMeal suggestedMeal) {
+  public Response checksToPlanMeal(User user, AbstractMeal suggestedMeal) {
     Response responseForUser = getResponseOfCheckOnUserAndMeal(user, suggestedMeal);
     if (responseForUser != null) return responseForUser;
     return checkForRightToPlanMeal(user);
   }
 
-  private Response getResponseOfCheckOnUserAndMeal(User user, SuggestedMeal suggestedMeal) {
+  private Response getResponseOfCheckOnUserAndMeal(User user, AbstractMeal suggestedMeal) {
     Response responseForUser = checkForUser(user);
     if (responseForUser != null) {
       return responseForUser;

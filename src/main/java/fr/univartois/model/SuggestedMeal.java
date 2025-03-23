@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class SuggestedMeal {
+public class SuggestedMeal extends AbstractMeal {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
