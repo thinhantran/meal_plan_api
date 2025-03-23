@@ -4,7 +4,6 @@ import java.util.List;
 
 import fr.univartois.model.DietaryRestriction;
 import fr.univartois.model.Family;
-import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import fr.univartois.repository.DietaryRestrictionRepository;
 import fr.univartois.repository.MemberRoleRepository;
@@ -36,12 +35,14 @@ public class UserService {
     return userRepository.findByUsername(username);
   }
 
-  public Response leaveFamily(long familyId, long userId) {
-    MemberRole memberRole = memberRoleRepository.findByUserAndFamily(familyId, userId);
-    if (memberRole == null) {
+  public Response leaveFamily(User user) {
+    if (user.getMemberRole() == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    memberRoleRepository.delete(memberRole);
+    Family family = user.getMemberRole().getFamily();
+    memberRoleRepository.delete(user.getMemberRole());
+    family.getMemberRoles().remove(user.getMemberRole());
+    user.setMemberRole(null);
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 

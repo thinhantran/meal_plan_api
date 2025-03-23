@@ -91,15 +91,15 @@ public class UserResource {
     return userService.getFamily(user);
   }
 
-  @Path("/families/{familyId}")
+  @Path("/families/")
   @DELETE
   @Transactional
-  public Response leaveFamily(@PathParam("familyId") long familyId) {
+  public Response leaveFamily() {
     User user = userService.findByUsername(jwt.getSubject());
     if(user == null) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
-    return userService.leaveFamily(familyId, user.getUserId());
+    return userService.leaveFamily(user);
   }
 
   @Path("/families/{familyId}")
