@@ -150,7 +150,7 @@ public class SuggestedMealService {
   }
 
   public Response checkForRightToPlanMeal(User user) {
-    return List.of(MANAGER, ADMIN).contains(user.getMemberRole().getCategory())
+    return !List.of(MANAGER, ADMIN).contains(user.getMemberRole().getCategory())
         ? Response.status(Response.Status.FORBIDDEN).build() : null;
   }
 
