@@ -52,11 +52,17 @@ public class UserService {
 
   public List<DietaryRestriction> addDietaryRestriction(User user, List<String> terms) {
     for (String term : terms) {
-      DietaryRestriction dietaryRestriction = new DietaryRestriction();
-      dietaryRestriction.setUser(user);
-      dietaryRestriction.setRestrictionName(term);
-      user.addRestriction(dietaryRestriction);
-      dietaryRestrictionRepository.persist(dietaryRestriction);
+      List<DietaryRestriction> existingRestrictions = dietaryRestrictionRepository.getByUser(user)
+          .stream().filter(r -> term.equals(r.getRestrictionName())).toList();
+      if (!existingRestrictions.isEmpty()) {
+        user.getDietaryRestrictions().remove(existingRestrictions.getFirst());
+      } else {
+        DietaryRestriction dietaryRestriction = new DietaryRestriction();
+        dietaryRestriction.setUser(user);
+        dietaryRestriction.setRestrictionName(term);
+        user.addRestriction(dietaryRestriction);
+        dietaryRestrictionRepository.persist(dietaryRestriction);
+      }
     }
     return getDietaryRestrictions(user);
   }
