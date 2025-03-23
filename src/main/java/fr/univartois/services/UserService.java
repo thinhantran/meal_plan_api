@@ -21,17 +21,14 @@ public class UserService {
   MemberRoleRepository memberRoleRepository;
 
   DietaryRestrictionRepository dietaryRestrictionRepository;
-  private FamilyRepository familyRepository;
+
+  FamilyRepository familyRepository;
 
   public UserService(UserRepository userRepository, MemberRoleRepository memberRoleRepository,
-      DietaryRestrictionRepository dietaryRestrictionRepository) {
+      DietaryRestrictionRepository dietaryRestrictionRepository, FamilyRepository familyRepository) {
     this.userRepository = userRepository;
     this.memberRoleRepository = memberRoleRepository;
     this.dietaryRestrictionRepository = dietaryRestrictionRepository;
-  }
-
-  @jakarta.inject.Inject
-  public UserService(FamilyRepository familyRepository) {
     this.familyRepository = familyRepository;
   }
 
