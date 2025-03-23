@@ -63,7 +63,7 @@ public class AuthResource {
   @RolesAllowed("access")
   @SecurityRequirement(name = "AccessBearerAuthentication")
   public Response getUser() {
-    User user = authService.hasAssociatedUser(jwt);
+    User user = authService.findUser(jwt.getSubject());
     if (user == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
