@@ -17,8 +17,6 @@ public class IngredientService {
   }
 
   public List<Ingredient> getAllIngredients() {
-    return ingredientRepository.findAll(
-        Sort.descending("quantity").and("name", Sort.Direction.Ascending)
-    ).list();
+    return ingredientRepository.findAll(Sort.by("name")).list();
   }
 }
