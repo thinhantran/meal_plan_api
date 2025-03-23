@@ -147,10 +147,6 @@ public class FridgeService {
       ingredientFridgeQuantity.setQuantity(input.getQuantity());
     }
 
-    if (input.getDate() != null && !Objects.equals(input.getDate(), ingredientFridgeQuantity.getDate())) {
-      ingredientFridgeQuantity.setDate(ingredientFridgeQuantity.getDate());
-    }
-
     return fridgeRepository.updateIngredientFridgeQuantity(ingredientFridgeQuantity);
   }
 

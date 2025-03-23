@@ -76,7 +76,6 @@ class FridgeResourceTest {
 
     IngredientFridgeQuantityInput ingredientFridgeQuantityInput = new IngredientFridgeQuantityInput(
         "Tomate",
-        LocalDate.of(2025,3,10),
         5D,
         "KG"
     );
@@ -97,7 +96,6 @@ class FridgeResourceTest {
   void testEditIngredientFromFamilyFridge() {
     IngredientFridgeQuantityInput ingredientFridgeQuantityInput = new IngredientFridgeQuantityInput(
         "Tomate",
-        LocalDate.of(2025, 03, 10),
         10.0,
         "KG");
 
