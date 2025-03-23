@@ -102,8 +102,15 @@ public class FridgeService {
     Family family = familyRepository.findByUser(user);
     List<IngredientFridgeQuantity> existingList = ingredientFridgeQuantityRepository.findByFamily(family);
     Ingredient ingredient = ingredientRepository.findByName(input.getIngredientName());
+
     if (existingList.stream().map(IngredientFridgeQuantity::getIngredient).anyMatch(ingredient::equals)) {
-      return Response.status(Response.Status.CONFLICT).entity(new Message("Ingredient is already present")).build();
+      IngredientFridgeQuantity existingQuantity = existingList.stream().filter(i -> ingredient.equals(i.getIngredient()))
+          .toList().getFirst();
+      if (existingQuantity.getQuantity() != 0) {
+        return Response.status(Response.Status.CONFLICT).entity(new Message("Ingredient is already present")).build();
+      } else {
+        ingredientFridgeQuantityRepository.delete(existingQuantity);
+      }
     }
     IngredientFridgeQuantity ingredientFridgeQuantity = new IngredientFridgeQuantity();
     Fridge fridge = family.getFridge();
