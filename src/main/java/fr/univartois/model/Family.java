@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -47,7 +46,7 @@ public class Family {
 
   @JoinColumn(unique = true)
   @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JsonManagedReference("family")
+  @JsonIgnore
   private Fridge fridge;
 
   public void addMember(MemberRole memberRole) {

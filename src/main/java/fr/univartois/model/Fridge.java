@@ -2,7 +2,7 @@ package fr.univartois.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -28,7 +28,7 @@ public class Fridge {
 
   @OneToOne
   @JoinColumn(name = "family_id", nullable = false)
-  @JsonBackReference("family")
+  @JsonIgnore
   private Family family;
 
   @OneToMany(mappedBy = "fridge", fetch = FetchType.EAGER)
