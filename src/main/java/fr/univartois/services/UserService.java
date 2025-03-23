@@ -53,7 +53,7 @@ public class UserService {
   public List<DietaryRestriction> addDietaryRestriction(User user, List<String> terms) {
     for (String term : terms) {
       List<DietaryRestriction> existingRestrictions = dietaryRestrictionRepository.getByUser(user)
-          .stream().filter(r -> term.equals(r.getRestrictionName())).toList();
+          .stream().filter(r -> term.equalsIgnoreCase(r.getRestrictionName())).toList();
       if (!existingRestrictions.isEmpty()) {
         user.getDietaryRestrictions().remove(existingRestrictions.getFirst());
       } else {
