@@ -69,10 +69,12 @@ public class FamilyService {
     public Response joinFamily(String code, User user) {
         Family family = familyRepository.findFamilyByCode(code);
         if(memberRoleRepository.findByUserAndFamily(family.getId(), user.getUserId()) != null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("L'utilisateur fait déjà parti du groupe").build();
+            return Response.status(Response.Status.CONFLICT).entity("L'utilisateur fait déjà parti du groupe").build();
         }
-        MemberRole memberRole = new MemberRole(null, user, family, MemberRole.Role.MEMBER);
+        MemberRole memberRole = new MemberRole(null, user, family, MemberRole.Role.PROPOSER);
         memberRoleRepository.persist(memberRole);
+        family.getMemberRoles().add(memberRole);
+        user.setMemberRole(memberRole);
         return Response.status(Response.Status.OK).build();
     }
 

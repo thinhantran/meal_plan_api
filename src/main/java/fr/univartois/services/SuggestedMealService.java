@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import fr.univartois.dtos.Message;
 import fr.univartois.model.AbstractMeal;
 import fr.univartois.model.Family;
 import fr.univartois.model.PlannedMeal;
@@ -64,6 +65,10 @@ public class SuggestedMealService {
     User user = Objects.requireNonNull(userRepository.findByUsername(Objects.requireNonNull(jwt.getSubject())));
     Response response = checksToSuggestMeal(user);
     if (response != null) return response;
+    if (!mealRepository.list("date = ?1 AND isLunchOrDinnerOtherwise = ?2 AND associatedFamily = ?3",
+        date, isLunch, user.getMemberRole().getFamily()).isEmpty()) {
+      return Response.status(Response.Status.CONFLICT).entity(new Message("A meal already exists")).build();
+    }
     Recipe recipe = Objects.requireNonNull(recipeService.getRecipeById(recipeId));
     SuggestedMeal suggestedMeal = new SuggestedMeal();
     suggestedMeal.setProposerUsername(user.getUsername());
