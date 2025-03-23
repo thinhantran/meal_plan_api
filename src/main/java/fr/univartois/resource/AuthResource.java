@@ -97,7 +97,7 @@ public class AuthResource {
       return Response.status(Response.Status.PRECONDITION_FAILED).build();
     }
     if (!authService.comparePassword(targetedUser, oldPassword)) {
-      return Response.status(Response.Status.UNAUTHORIZED).build();
+      return Response.status(Response.Status.FORBIDDEN).build();
     }
     authService.updateUserWithNewPassword(targetedUser, newPassword);
     return Response.status(Response.Status.NO_CONTENT).build();
