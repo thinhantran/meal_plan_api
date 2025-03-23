@@ -4,8 +4,10 @@ import java.util.List;
 
 import fr.univartois.model.DietaryRestriction;
 import fr.univartois.model.Family;
+import fr.univartois.model.MemberRole;
 import fr.univartois.model.User;
 import fr.univartois.repository.DietaryRestrictionRepository;
+import fr.univartois.repository.FamilyRepository;
 import fr.univartois.repository.MemberRoleRepository;
 import fr.univartois.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,12 +21,18 @@ public class UserService {
   MemberRoleRepository memberRoleRepository;
 
   DietaryRestrictionRepository dietaryRestrictionRepository;
+  private FamilyRepository familyRepository;
 
   public UserService(UserRepository userRepository, MemberRoleRepository memberRoleRepository,
       DietaryRestrictionRepository dietaryRestrictionRepository) {
     this.userRepository = userRepository;
     this.memberRoleRepository = memberRoleRepository;
     this.dietaryRestrictionRepository = dietaryRestrictionRepository;
+  }
+
+  @jakarta.inject.Inject
+  public UserService(FamilyRepository familyRepository) {
+    this.familyRepository = familyRepository;
   }
 
   public Family getFamily(User user) {
@@ -43,6 +51,25 @@ public class UserService {
     memberRoleRepository.delete(user.getMemberRole());
     family.getMemberRoles().remove(user.getMemberRole());
     user.setMemberRole(null);
+    List<User> adminsLeft = family.getMemberRoles().stream()
+        .filter(mr -> MemberRole.Role.ADMIN == mr.getCategory())
+        .map(MemberRole::getUser).toList();
+    List<User> managersLeft = family.getMemberRoles().stream()
+        .filter(mr -> MemberRole.Role.MANAGER == mr.getCategory())
+        .map(MemberRole::getUser).toList();
+    List<User> proposersLeft = family.getMemberRoles().stream()
+        .filter(mr -> MemberRole.Role.PROPOSER == mr.getCategory())
+        .map(MemberRole::getUser).toList();
+    List<User> usersLeft = family.getMemberRoles().stream()
+        .filter(mr -> MemberRole.Role.MEMBER == mr.getCategory())
+        .map(MemberRole::getUser).toList();
+    if (adminsLeft.isEmpty() && managersLeft.isEmpty() && proposersLeft.isEmpty() && usersLeft.isEmpty()) {
+      familyRepository.delete(family);
+    } else if (adminsLeft.isEmpty() && managersLeft.isEmpty() && !proposersLeft.isEmpty()) {
+      proposersLeft.getFirst().getMemberRole().setCategory(MemberRole.Role.MANAGER);
+    } else if (adminsLeft.isEmpty() && managersLeft.isEmpty()) {
+      usersLeft.getFirst().getMemberRole().setCategory(MemberRole.Role.MANAGER);
+    }
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 
