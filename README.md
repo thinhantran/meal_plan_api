@@ -1,5 +1,5 @@
 # projet-jee
-This is a group project with 3 other members at school. I migrated the project from the university's GitLab to my personal GitHub account.
+This project and the [Mobilité](https://github.com/thinhantran/projet-mobilite) project are group projects that I worked on with three other students at university. I migrated the project from the university's GitLab to my personal GitHub account.
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
